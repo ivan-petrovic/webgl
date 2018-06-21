@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+	<title>HTML5 boilerplate – all you really need…</title>
+	<meta name="description" content="The HTML5 Herald">
+	<meta name="author" content="SitePoint">
+  
+	<link rel="stylesheet" href="css/style.css">
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+<body id="home" onload="Mn.start()">
+
+	<canvas id="glscreen" width="640" height="480"></canvas>
+	
+	<script id="2d-vertex-shader" type="x-shader/x-vertex">// <![CDATA[
+		attribute vec2 a_position;
+		void main() {
+			gl_Position = vec4(a_position, 0, 1);
+		}
+	// ]]></script>
+	
+	<script id="2d-fragment-shader" type="x-shader/x-fragment">// <![CDATA[
+		#ifdef GL_FRAGMENT_PRECISION_HIGH
+			precision highp float;
+		#else
+			precision mediump float;
+		#endif
+		
+		void main() {
+			const float RADIUS = 150.0;
+			float redIntensity1 = 0.0;
+			float redIntensity2 = 0.0;
+			float angle;
+			float normalizedX = gl_FragCoord.x - 320.0;
+			float normalizedY = gl_FragCoord.y - 240.0;
+			float distance = sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
+	
+			if (distance < RADIUS) {
+				redIntensity1 = 1.0 - distance / RADIUS;
+				if( abs(normalizedX) > 0.0) {
+					angle = atan(normalizedY, normalizedX);
+				} else {
+					 angle = 0.0;
+				}
+				redIntensity2 = abs(cos(2.5 * angle)) * (1.1 - distance / RADIUS);
+			}
+			gl_FragColor = vec4(max(redIntensity1, redIntensity2), 0.0, 0.0, 1.0);
+		}
+	// ]]></script>
+	
+	<script id="2d-fragment-shader-01" type="x-shader/x-fragment">// <![CDATA[
+		void main() {
+			gl_FragColor = vec4(gl_FragCoord.x / 640.0, gl_FragCoord.y / 480.0, 0, 1);
+		}
+	// ]]></script>
+	<!--
+	<script src="dist/engine.js"></script>
+	<script src="dist/main.js"></script>
+	-->
+	<script src="js/bundle.js"></script>
+</body>
+</html>
