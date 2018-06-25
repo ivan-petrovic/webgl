@@ -3,6 +3,7 @@ export default class {
         this.shader = shader;               // the shader for shading this object
         this.vertexBuffer = vertexBuffer;   // the vertex buffer ?id? for this object
         this.color = [1.0, 1.0, 1.0, 1.0];  // Color for fragment shader
+        this.distance = 10.0;
     }
 
     getColor() { return this.color; }
@@ -22,6 +23,14 @@ export default class {
             false,          // if the content is normalized vectors
             0,              // number of bytes to skip in between elements
             0);             // offsets to the first element
+
+        // gl.enableVertexAttribArray(this.shader.getPositionLocation());
+        gl.uniform1f(this.shader.getDistanceLocation(), this.distance);
+        this.distance += 0.25;
+        if (this.distance > 100.0) {
+            this.distance = 10.0;
+        }
+        //gl.uniform1f(this.shader.getDistanceLocation(), 50.0);
 
         this.shader.activate();
         // gl.enableVertexAttribArray(this.shader.getPositionLocation());

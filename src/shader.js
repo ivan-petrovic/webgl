@@ -18,16 +18,20 @@ export default class {
         fragmentShader = this._compileShader(this.fragmetShaderId, gl.FRAGMENT_SHADER);
 
         this.program = this._linkProgram(vertexShader, fragmentShader);
+        gl.useProgram(this.program);
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
+        this.distanceLocation = gl.getUniformLocation(this.program, "uDistance");
         // this.mPixelColor = gl.getUniformLocation(this.mCompiledShader, "uPixelColor");
     }
 
     getPositionLocation() { return this.positionLocation; }
+    getDistanceLocation() { return this.distanceLocation; }
 
     activate() {
         let gl = this.gl;
-        gl.useProgram(this.program);
+        // gl.useProgram(this.program);
         gl.enableVertexAttribArray(this.positionLocation);
+        // gl.uniform1f(this.distanceLocation, 100.0);
         // gl.uniform4fv(this.mPixelColor, pixelColor);
     };
 

@@ -6,12 +6,17 @@ export default class {
         // this.canvas.height = 480;
         this.i = 0;
         this.time = null;
+        this.renderable = null;
     }
 
     init() {
         let gl = this.gl;
     
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    }
+
+    addRenderable(renderable) {
+        this.renderable = renderable;
     }
 
     start() {
@@ -33,5 +38,8 @@ export default class {
         gl.clearColor(1.0, 0.5, 0.5, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
     
+        if (this.renderable !== null) {
+            this.renderable.draw(gl);
+        }
     }
 }

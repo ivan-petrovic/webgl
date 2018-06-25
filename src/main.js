@@ -21,5 +21,7 @@ export function start() {
     
     let square = new Renderable(shader, vb.getVertexBufferId());
     
-    square.draw(engine.gl);
+    // square.draw(engine.gl);
+    engine.addRenderable(square);
+    engine.start();
 }
