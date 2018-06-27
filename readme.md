@@ -1,1 +1,1 @@
-Hello WebGL. How are you?
+Hello WebGL.
