@@ -2,10 +2,11 @@
   "name": "webgl",
   "version": "1.0.0",
   "description": "Learning WebGL and making simple engine for experimenting",
-  "main": "index.html",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src -d dist && browserify dist/main.js --standalone Mn -o js/bundle.js"
+    "build": "babel src -d dist && browserify dist/main.js --standalone Mn -o public/js/bundle.js",
+    "start": "node ./index.js"
   },
   "author": "Ivan Petrovic <mangan77@gmail.com>",
   "license": "ISC",
@@ -13,5 +14,8 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "browserify": "^16.2.2"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
   }
 }
