@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
 
-	<title>HTML5 boilerplate – all you really need…</title>
-	<meta name="description" content="The HTML5 Herald">
-	<meta name="author" content="SitePoint">
+	<title>WebGL</title>
+	<meta name="description" content="Playing with the HTML5 WebGL">
+	<meta name="author" content="Ivan Petrovic">
   
 	<link rel="stylesheet" href="css/style.css">
 	<!--[if IE]>
@@ -13,97 +13,10 @@
 	<![endif]-->
 </head>
 
-<body id="home" onload="Mn.start()">
+<body id="home" onload="Mn.init()">
 
 	<canvas id="glscreen" width="640" height="480"></canvas>
 	
-	<script id="2d-vertex-shader" type="x-shader/x-vertex">// <![CDATA[
-		attribute vec2 a_position;
-		void main() {
-			gl_Position = vec4(a_position, 0, 1);
-		}
-	// ]]></script>
-
-	<script id="2d-fragment-shader" type="x-shader/x-fragment">// <![CDATA[
-		#ifdef GL_FRAGMENT_PRECISION_HIGH
-			precision highp float;
-		#else
-			precision mediump float;
-		#endif
-		uniform float uDistance;
-		void main() {
-			// const float DISTANCE = 50.0;
-			float DISTANCE = uDistance;
-			
-			float redIntensity = 0.0;
-			float distance = 0.0;
-
-			vec2 x1 = vec2(100.0, 100.0);
-			vec2 x2 = vec2(500.0, 400.0);
-			vec2 normalizedX1 = vec2(x1.x - 320.0, x1.y - 240.0);
-			vec2 normalizedX2 = vec2(x2.x - 320.0, x2.y - 240.0);
-			vec2 p = normalize(normalizedX2 - normalizedX1);
-			float lengthOfSegment = length(normalizedX2 - normalizedX1);
-
-			vec2 normalizedX = vec2(gl_FragCoord.x - 320.0, gl_FragCoord.y - 240.0);
-			vec2 x = normalizedX - normalizedX1;
-
-			float projectionOnP = dot(p, x);
-			vec2 closestPointOnLine = normalizedX1 + projectionOnP * p;
-
-			distance = length(closestPointOnLine - normalizedX);
-
-			if (distance < DISTANCE && projectionOnP > 0.0 && projectionOnP < lengthOfSegment) {
-				redIntensity = 1.0 - distance / DISTANCE;
-			}
-			else if (length(x) < DISTANCE) {
-				redIntensity = 1.0 - length(x) / DISTANCE;
-			}
-			else if (length(normalizedX - normalizedX2) < DISTANCE) {
-				redIntensity = 1.0 - length(normalizedX - normalizedX2) / DISTANCE;
-			}
-			gl_FragColor = vec4(redIntensity, 0.0, 0.0, 1.0);
-		}
-	// ]]></script>
-
-	<script id="2d-fragment-shader-01" type="x-shader/x-fragment">// <![CDATA[
-		#ifdef GL_FRAGMENT_PRECISION_HIGH
-			precision highp float;
-		#else
-			precision mediump float;
-		#endif
-		
-		void main() {
-			const float RADIUS = 150.0;
-			float redIntensity1 = 0.0;
-			float redIntensity2 = 0.0;
-			float angle;
-			float normalizedX = gl_FragCoord.x - 320.0;
-			float normalizedY = gl_FragCoord.y - 240.0;
-			float distance = sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
-	
-			if (distance < RADIUS) {
-				redIntensity1 = 1.0 - distance / RADIUS;
-				if( abs(normalizedX) > 0.0) {
-					angle = atan(normalizedY, normalizedX);
-				} else {
-					 angle = 0.0;
-				}
-				redIntensity2 = abs(cos(2.5 * angle)) * (1.1 - distance / RADIUS);
-			}
-			gl_FragColor = vec4(max(redIntensity1, redIntensity2), 0.0, 0.0, 1.0);
-		}
-	// ]]></script>
-	
-	<script id="2d-fragment-shader-01" type="x-shader/x-fragment">// <![CDATA[
-		void main() {
-			gl_FragColor = vec4(gl_FragCoord.x / 640.0, gl_FragCoord.y / 480.0, 0, 1);
-		}
-	// ]]></script>
-	<!--
-	<script src="dist/engine.js"></script>
-	<script src="dist/main.js"></script>
-	-->
 	<script src="js/bundle.js"></script>
 </body>
 </html>

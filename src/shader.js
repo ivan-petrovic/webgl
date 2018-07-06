@@ -1,7 +1,8 @@
 export default class {
-    constructor(vertexShaderId, fragmentShaderId, gl) {
+    constructor(vertexShaderId, fragmentShaderId, resources, gl) {
         this.vertexShaderId = vertexShaderId;
         this.fragmetShaderId = fragmentShaderId;
+        this.resources = resources;
         this.gl = gl;
         this.program = null;
         this.positionLocation = null;
@@ -9,8 +10,6 @@ export default class {
 
     init() {
         let gl = this.gl;
-        let shaderScript;
-        let shaderSource;
         let vertexShader;
         let fragmentShader;
     
@@ -18,7 +17,7 @@ export default class {
         fragmentShader = this._compileShader(this.fragmetShaderId, gl.FRAGMENT_SHADER);
 
         this.program = this._linkProgram(vertexShader, fragmentShader);
-        gl.useProgram(this.program);
+        
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
         this.distanceLocation = gl.getUniformLocation(this.program, "uDistance");
         // this.mPixelColor = gl.getUniformLocation(this.mCompiledShader, "uPixelColor");
@@ -37,12 +36,10 @@ export default class {
 
     _compileShader(shaderId, shaderType) {
         let gl = this.gl;
-        let shaderScript;
         let shaderSource;
         let shader;
 
-        shaderScript = document.getElementById(shaderId);
-        shaderSource = shaderScript.text;
+        shaderSource = this.resources.retrieveAsset(shaderId)
         shader = gl.createShader(shaderType);
         gl.shaderSource(shader, shaderSource);
         gl.compileShader(shader);

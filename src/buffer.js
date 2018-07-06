@@ -1,8 +1,8 @@
 export default class {
     constructor(aVertices, gl) {
-        this.vertices = aVertices;  // the shader for shading this object
-        this.gl = gl;               // webgl context, passed from engine
-        var vertexBufferId = null;  // reference to the vertex positions for the square in the gl context
+        this.vertices = aVertices;   // vertices of the object
+        this.gl = gl;                // webgl context, passed from engine
+        this.vertexBufferId = null;  // reference to the vertex positions for the square in the gl context
     }
 
     initialize() {
