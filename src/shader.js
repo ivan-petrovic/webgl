@@ -1,45 +1,40 @@
+"use strict";
+
 export default class {
     constructor(vertexShaderId, fragmentShaderId, resources, gl) {
         this.vertexShaderId = vertexShaderId;
         this.fragmetShaderId = fragmentShaderId;
-        this.resources = resources;
-        this.gl = gl;
         this.program = null;
-        this.positionLocation = null;
     }
 
-    init() {
-        let gl = this.gl;
+    initialize(resources, gl) {
         let vertexShader;
         let fragmentShader;
     
-        vertexShader = this._compileShader(this.vertexShaderId, gl.VERTEX_SHADER);
-        fragmentShader = this._compileShader(this.fragmetShaderId, gl.FRAGMENT_SHADER);
+        vertexShader = this._compileShader(this.vertexShaderId, gl.VERTEX_SHADER, resources, gl);
+        fragmentShader = this._compileShader(this.fragmetShaderId, gl.FRAGMENT_SHADER, resources, gl);
 
-        this.program = this._linkProgram(vertexShader, fragmentShader);
+        this.program = this._linkProgram(vertexShader, fragmentShader, gl);
         
-        this.positionLocation = gl.getAttribLocation(this.program, "a_position");
-        this.distanceLocation = gl.getUniformLocation(this.program, "uDistance");
-        // this.mPixelColor = gl.getUniformLocation(this.mCompiledShader, "uPixelColor");
+        this.getLocations(gl);
     }
 
-    getPositionLocation() { return this.positionLocation; }
-    getDistanceLocation() { return this.distanceLocation; }
+    // Should be implemented by subclasses of this parent shader class.
+    getLocations(gl) {
+    }
 
-    activate() {
-        let gl = this.gl;
-        // gl.useProgram(this.program);
-        gl.enableVertexAttribArray(this.positionLocation);
+    activate(gl) {
+        gl.useProgram(this.program);
+        // gl.enableVertexAttribArray(this.positionLocation);
         // gl.uniform1f(this.distanceLocation, 100.0);
         // gl.uniform4fv(this.mPixelColor, pixelColor);
     };
 
-    _compileShader(shaderId, shaderType) {
-        let gl = this.gl;
+    _compileShader(shaderId, shaderType, resources, gl) {
         let shaderSource;
         let shader;
 
-        shaderSource = this.resources.retrieveAsset(shaderId)
+        shaderSource = resources.retrieveAsset(shaderId)
         shader = gl.createShader(shaderType);
         gl.shaderSource(shader, shaderSource);
         gl.compileShader(shader);
@@ -47,8 +42,7 @@ export default class {
         return shader;
     }
 
-    _linkProgram(vertexShader, fragmentShader) {
-        let gl = this.gl;
+    _linkProgram(vertexShader, fragmentShader, gl) {
         let program = gl.createProgram();
         gl.attachShader(program, vertexShader);
         gl.attachShader(program, fragmentShader);
