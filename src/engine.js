@@ -6,15 +6,14 @@ import Input from './input';
 
 export default class {
     constructor() {
-        this.canvas        = document.getElementById('glscreen');
-        this.gl            = this.canvas.getContext('webgl');
-        // this.canvas.width  = 640;
-        // this.canvas.height = 480;
+        this.canvas = document.getElementById('glscreen');
+        this.gl     = this.canvas.getContext('webgl', {alpha: false})  || this.canvas.getContext('experimental-webgl', {alpha: false});
+        this.width  = this.gl.drawingBufferWidth;
+        this.height = this.gl.drawingBufferHeight;
 
-        this.i = 0;
         this.time = null;
 
-        this.renderable = null;
+        this.renderables = [];
 
         this.resources = new ResourceMap();  // should be singleton (for now that is not implemented)
         this.textFileLoader = new TextFileLoader(this.resources);
@@ -33,25 +32,25 @@ export default class {
         this.input.initialize();
     
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-        // console.log('gl.drawingBufferWidth: ', gl.drawingBufferWidth);
-        // console.log('gl.drawingBufferHeight: ', gl.drawingBufferHeight);
+        // gl.blendFunc(gl.SRC_COLOR,gl.ONE_MINUS_SRC_COLOR);
+        // gl.enable(gl.BLEND);
     }
 
     addRenderable(renderable) {
-        this.renderable = renderable;
+        this.renderables.push(renderable);
     }
 
     loadResourcesAndStart() {
-        if (this.renderable !== null) {
-            this.renderable.loadResources();
+        for (let renderable of this.renderables) {
+            renderable.loadResources();
         }
         this.resources.setLoadCompleteCallback( () => this.start() );
     }
 
     start() {
         this.initialize();
-        if (this.renderable !== null) {
-            this.renderable.initialize();
+        for (let renderable of this.renderables) {
+            renderable.initialize();
         }
         window.requestAnimationFrame((now) => this.render(now));
     }
@@ -61,29 +60,23 @@ export default class {
     
         let dt = now - (this.time || now);
         this.time = now;
-    
-        // if(this.i++ < 10) {
-        //     console.log(this.i, ': ', now, dt);
-        // }
-    
-        if (this.renderable !== null) {
-            this.input.update();
-            this.renderable.update();
 
-            if (this.input.isKeyPressed(this.input.Keys.Right)) {
-                console.log('Pressed right');
-            }
-            if (this.input.isKeyClicked(this.input.Keys.Left)) {
-                console.log('Clicked left');
-            }
+        // Update
+        this.input.update();
+        for (let renderable of this.renderables) {
+            renderable.update();
         }
 
+        // Draw
+
+        // 1. Clear screen
         let gl = this.gl;
-        gl.clearColor(1.0, 0.5, 0.5, 1.0);
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-    
-        if (this.renderable !== null) {
-            this.renderable.draw(gl);
+
+        // 2. Draw scene
+        for (let renderable of this.renderables) {
+            renderable.draw(this.gl);
         }
     }
 }

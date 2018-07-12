@@ -9,16 +9,16 @@ export default class extends Shader {
         // Specific locations for this shader
         this.positionLocation = null;
         this.distanceLocation = null;
-        this.viewportLocation = null;
+        this.pointsLocation = null;
     }
 
     getLocations(gl) {
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
         this.distanceLocation = gl.getUniformLocation(this.program, "uDistance");
-        this.viewportLocation = gl.getUniformLocation(this.program, "uViewport");
+        this.pointsLocation = gl.getUniformLocation(this.program, "uPoints");
     }
 
     getPositionLocation() { return this.positionLocation; }
     getDistanceLocation() { return this.distanceLocation; }
-    getViewportLocation() { return this.viewportLocation; }
+    getPointsLocation() { return this.pointsLocation; }
 }
