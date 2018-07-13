@@ -1,15 +1,15 @@
 "use strict";
 
 import MnEngine from './engine';
-import LightSaber from './light_saber_renderable';
+import ColoredSquare from './colored_square_renderable';
 
 export function main() {
     let engine = new MnEngine();
-    let saber1 = new LightSaber(engine, -100.0, -100.0, 200.0, 200.0);
-    let saber2 = new LightSaber(engine, 200.0, 0.0, 100.0, -200.0);
+    let square1 = new ColoredSquare(engine, -0.1, -0.1, 20.0);
+    let square2 = new ColoredSquare(engine, 0.2, 0.0, 40.0);
 
-    engine.addRenderable(saber1);
-    engine.addRenderable(saber2);
+    engine.addRenderable(square1);
+    engine.addRenderable(square2);
 
     engine.loadResourcesAndStart();
 }
