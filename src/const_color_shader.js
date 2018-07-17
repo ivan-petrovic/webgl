@@ -8,14 +8,17 @@ export default class extends Shader {
 
         // Specific locations for this shader
         this.positionLocation = null;
-        this.modelTransform = null;
+        this.PVMTransformLocation = null;
+        this.colorLocation = null;
     }
 
     getLocations(gl) {
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
-        this.modelTransform = gl.getUniformLocation(this.program, "u_ModelTransform");
+        this.PVMTransformLocation = gl.getUniformLocation(this.program, "u_PVMTransform");
+        this.colorLocation = gl.getUniformLocation(this.program, "u_PixelColor");
     }
 
     getPositionLocation() { return this.positionLocation; }
-    getModelTransformLocation() { return this.modelTransform; }
+    getPVMTransformLocation() { return this.PVMTransformLocation; }
+    getColorLocation() { return this.colorLocation; }
 }

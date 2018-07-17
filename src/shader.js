@@ -25,7 +25,7 @@ export default class {
 
     activate(gl) {
         gl.useProgram(this.program);
-    };
+    }
 
     _compileShader(shaderId, shaderType, resources, gl) {
         let shaderSource;

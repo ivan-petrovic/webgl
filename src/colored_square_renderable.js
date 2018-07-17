@@ -9,14 +9,17 @@ let _shader = null;         // the shader for shading this object
 let _vertexBuffer = null;   // the vertex buffer for this object
 
 export default class ColoredSquare extends Renderable {
-    constructor(engine, centerX, centerY, width) {
+    constructor(engine, centerX, centerY, width, height) {
         super(engine);
 
         // Center and width of square
         this.centerX = centerX;
         this.centerY = centerY;
         this.width = width;
-        this.modelMatrix = mat4.create();
+        this.height = height;
+        this.color = [1.0, 0.0, 0.0, 1.0]; // default red color
+        // this.modelMatrix = mat4.create();
+        // this.vertexBuffer = null;
     }
 
     static get vertexShaderName() { return 'shaders/basicVS.glsl'; }
@@ -26,9 +29,12 @@ export default class ColoredSquare extends Renderable {
     static get vertexBuffer() { return _vertexBuffer; }
     static set vertexBuffer(value) { _vertexBuffer = value; }
     
+    setColor(color) { this.color = color; }
+    getColor() { return this.color; }
+
     loadResources() {
-        ColoredSquare.shader = null;
-        ColoredSquare.vertexBuffer = null;
+        // ColoredSquare.shader = null;
+        // ColoredSquare.vertexBuffer = null;
 
         // Load necessery shader files asynchroniously
         let textFileLoader = this.engine.getTextFileLoader();
@@ -43,13 +49,11 @@ export default class ColoredSquare extends Renderable {
         }
 
         if(ColoredSquare.vertexBuffer === null) {
-            // let halfWidth = this.width / 2.0;
-            let halfWidth = 0.2;
             let verticesOfSquare = [
-                halfWidth, halfWidth, 0.0,
-                -halfWidth, halfWidth, 0.0,
-                halfWidth, -halfWidth, 0.0,
-                -halfWidth, -halfWidth, 0.0
+                0.5, 0.5, 0.0,
+                -0.5, 0.5, 0.0,
+                0.5, -0.5, 0.0,
+                -0.5, -0.5, 0.0
             ];
             ColoredSquare.vertexBuffer = new VertexBuffer(verticesOfSquare);
             ColoredSquare.vertexBuffer.initialize(this.engine.getWebGLContext());
@@ -60,17 +64,30 @@ export default class ColoredSquare extends Renderable {
         let input = this.engine.getInput();
 
         if (input.isKeyClicked(input.Keys.Right)) {
-            this.centerX += 0.1;
-            console.log('this.centerX: ', this.centerX);
+            this.centerX += 1.0;
+            // console.log('this.centerX: ', this.centerX);
         }
         if (input.isKeyClicked(input.Keys.Left)) {
-            this.centerX -= 0.1;
-            console.log('this.centerX: ', this.centerX);
+            this.centerX -= 1.0;
+            // console.log('this.centerX: ', this.centerX);
         }
     }
 
     draw(gl) {
-        this.modelMatrix = mat4.fromTranslation(this.modelMatrix, [this.centerX, this.centerY, 0.0]);
+        let camera = this.engine.getCamera();
+        let pvmMatrix = mat4.create();
+        let modelMatrix = mat4.create(); // Creates a blank identity matrix
+        
+        // modelMatrix = mat4.fromTranslation(this.modelMatrix, [this.centerX, this.centerY, 0.0]);
+        
+        // Step A: compute translation, for now z is always at 0.0
+        mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(this.centerX, this.centerY, 0.0));
+        // Step B: concatenate with rotation.
+        // mat4.rotateZ(matrix, matrix, this.getRotationInRad());
+        // Step C: concatenate with scaling
+        mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(this.width, this.height, 1.0));
+
+        mat4.multiply(pvmMatrix, camera.getPVMatrix(), modelMatrix);
 
         // Activates the vertex buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, ColoredSquare.vertexBuffer.getId());
@@ -84,7 +101,8 @@ export default class ColoredSquare extends Renderable {
             0);             // offsets to the first element
 
         gl.enableVertexAttribArray(ColoredSquare.shader.getPositionLocation());
-        gl.uniformMatrix4fv(ColoredSquare.shader.getModelTransformLocation(), false, this.modelMatrix);
+        gl.uniformMatrix4fv(ColoredSquare.shader.getPVMTransformLocation(), false, pvmMatrix);
+        gl.uniform4fv(ColoredSquare.shader.getColorLocation(), this.color);
         // gl.uniform1f(ColoredSquare.shader.getDistanceLocation(), this.distance);
         // gl.uniform4fv(ColoredSquare.shader.getPointsLocation(), [this.p1x,this.p1y,this.p2x,this.p2y]);
         // ColoredSquare.shader.activate();

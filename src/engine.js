@@ -13,6 +13,7 @@ export default class {
 
         this.time = null;
 
+        this.camera = null;
         this.renderables = [];
 
         this.resources = new ResourceMap();  // should be singleton (for now that is not implemented)
@@ -25,6 +26,9 @@ export default class {
     getInput() { return this.input; }
     getResources() { return this.resources; }
     getTextFileLoader() { return this.textFileLoader; }
+    getCamera() { return this.camera; }
+
+    setCamera(camera) { this.camera = camera; }
 
     initialize() {
         let gl = this.gl;
@@ -71,12 +75,15 @@ export default class {
 
         // 1. Clear screen
         let gl = this.gl;
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        // gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        // gl.clear(gl.COLOR_BUFFER_BIT);
 
         // 2. Draw scene
+        if(this.camera !== null) {
+            this.camera.setupProjectionViewMatrix(gl);
+        }
         for (let renderable of this.renderables) {
-            renderable.draw(this.gl);
+            renderable.draw(gl);
         }
     }
 }
