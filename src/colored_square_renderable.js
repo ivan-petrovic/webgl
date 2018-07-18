@@ -18,8 +18,16 @@ export default class ColoredSquare extends Renderable {
         this.width = width;
         this.height = height;
         this.color = [1.0, 0.0, 0.0, 1.0]; // default red color
-        // this.modelMatrix = mat4.create();
-        // this.vertexBuffer = null;
+
+        this.grid = null;
+        this.row = 0;
+        this.column = 0;
+
+        this.movingRight = false;
+        this.movingLeft = false;
+        this.movingUp = false;
+        this.movingDown = false;
+        this.goalPosition = null;
     }
 
     static get vertexShaderName() { return 'shaders/basicVS.glsl'; }
@@ -31,6 +39,17 @@ export default class ColoredSquare extends Renderable {
     
     setColor(color) { this.color = color; }
     getColor() { return this.color; }
+    
+    setGrid(grid) { this.grid = grid; this.getPositionOnGrid(); }
+    setPositionOnGrid(row, column) {
+        this.row = row;
+        this.column = column;
+    }
+    getPositionOnGrid() {
+        let position = this.grid.getCellCenter(this.row, this.column);
+        this.centerX = position[0];
+        this.centerY = position[1];
+    }
 
     loadResources() {
         // ColoredSquare.shader = null;
@@ -60,17 +79,93 @@ export default class ColoredSquare extends Renderable {
         }
     }
 
+    isMoving() {
+        return this.movingLeft || this.movingRight || this.movingUp || this.movingDown;
+    }
+
     update() {
         let input = this.engine.getInput();
+        let speed = 0.4;
 
+        if (input.isKeyPressed(input.Keys.Right)) {
+            if(!this.isMoving()) {
+                this.movingRight = true;
+                this.column = this.grid.getNextRight(this.column);
+                this.goalPosition = this.grid.getCellCenter(this.row, this.column);
+            }
+        }
+
+        if (input.isKeyPressed(input.Keys.Left)) {
+            if(!this.isMoving()) {
+                this.movingLeft = true;
+                this.column = this.grid.getNextLeft(this.column);
+                this.goalPosition = this.grid.getCellCenter(this.row, this.column);
+            }
+        }
+
+        if (input.isKeyPressed(input.Keys.Up)) {
+            if(!this.isMoving()) {
+                this.movingUp = true;
+                this.row = this.grid.getNextUp(this.row);
+                this.goalPosition = this.grid.getCellCenter(this.row, this.column);
+            }
+        }
+
+        if (input.isKeyPressed(input.Keys.Down)) {
+            if(!this.isMoving()) {
+                this.movingDown = true;
+                this.row = this.grid.getNextDown(this.row);
+                this.goalPosition = this.grid.getCellCenter(this.row, this.column);
+            }
+        }
+
+        if(this.movingRight) {
+            this.centerX += speed;
+            if(this.centerX > this.goalPosition[0]) {
+                this.centerX = this.goalPosition[0];
+                this.movingRight = false;
+            }
+        }
+
+        if(this.movingLeft) {
+            this.centerX -= speed;
+            if(this.centerX < this.goalPosition[0]) {
+                this.centerX = this.goalPosition[0];
+                this.movingLeft = false;
+            }
+        }
+
+        if(this.movingUp) {
+            this.centerY += speed;
+            if(this.centerY > this.goalPosition[1]) {
+                this.centerY = this.goalPosition[1];
+                this.movingUp = false;
+            }
+        }
+
+        if(this.movingDown) {
+            this.centerY -= speed;
+            if(this.centerY < this.goalPosition[1]) {
+                this.centerY = this.goalPosition[1];
+                this.movingDown = false;
+            }
+        }
+
+        /*
         if (input.isKeyClicked(input.Keys.Right)) {
-            this.centerX += 1.0;
-            // console.log('this.centerX: ', this.centerX);
+            this.column = this.grid.getNextRight(this.column);
         }
         if (input.isKeyClicked(input.Keys.Left)) {
-            this.centerX -= 1.0;
-            // console.log('this.centerX: ', this.centerX);
+            this.column = this.grid.getNextLeft(this.column);
         }
+        if (input.isKeyClicked(input.Keys.Up)) {
+            this.row = this.grid.getNextUp(this.row);
+        }
+        if (input.isKeyClicked(input.Keys.Down)) {
+            this.row = this.grid.getNextDown(this.row);
+        }
+        this.getPositionOnGrid();
+        */
     }
 
     draw(gl) {
@@ -88,7 +183,7 @@ export default class ColoredSquare extends Renderable {
         mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(this.width, this.height, 1.0));
 
         mat4.multiply(pvmMatrix, camera.getPVMatrix(), modelMatrix);
-
+        ColoredSquare.shader.activate(gl);
         // Activates the vertex buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, ColoredSquare.vertexBuffer.getId());
 

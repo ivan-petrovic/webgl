@@ -3,7 +3,6 @@
 import MnEngine from './engine';
 import Camera from './camera';
 import ColoredSquare from './colored_square_renderable';
-import Grid from './grid_renderable';
 
 export function main() {
     let engine = new MnEngine();
@@ -15,14 +14,15 @@ export function main() {
     );
     engine.setCamera(camera);
 
-    let grid = new Grid(engine, -20.0, -20.0, 40.0, 40.0, 5, 5);
-    let square = new ColoredSquare(engine, 0.0, 0.0, 8.0, 8.0);
-    square.setColor([0.2, 0.0, 0.8, 1.0]);
-    square.setGrid(grid);
-    // square.setPositionOnGrid(4, 3);
+    let square1 = new ColoredSquare(engine, -10.0, -10.0, 8.0, 4.0);
+    let square2 = new ColoredSquare(engine, 30.0, 0.0, 7.0, 15.0);
+    square2.setColor([0.0, 1.0, 0.0, 1.0]); // green
+    let square3 = new ColoredSquare(engine, 0.0, 0.0, 3.0, 3.0);
+    square3.setColor([0.0, 0.0, 1.0, 1.0]); // blue
 
-    engine.addRenderable(grid);
-    engine.addRenderable(square);
+    engine.addRenderable(square1);
+    engine.addRenderable(square2);
+    engine.addRenderable(square3);
 
     engine.loadResourcesAndStart();
 }
