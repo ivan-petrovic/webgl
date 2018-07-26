@@ -19,9 +19,10 @@ export default class {
         this.resources = new ResourceMap();  // should be singleton (for now that is not implemented)
         this.textFileLoader = new TextFileLoader(this.resources);
         
-        this.input = new Input();
+        this.input = new Input(this.canvas);
     }
 
+    getCanvasElement() { return this.canvas; }
     getWebGLContext() { return this.gl; }
     getInput() { return this.input; }
     getResources() { return this.resources; }
