@@ -41,6 +41,8 @@ export default class {
             R : 82,
             S : 83,
             W : 87,
+            X : 88,
+            Z : 90,
 
             LastKeyCode: 222
         };

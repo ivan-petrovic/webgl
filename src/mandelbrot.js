@@ -14,7 +14,7 @@ export default class Mandelbrot extends Renderable {
 
         this.canvasSize = [engine.getCanvasWidth(), engine.getCanvasHeight()];
         this.offset = [-0.5, 0];
-        this.scale = 2.0;
+        this.scale = 1.0;
     }
 
     static get vertexShaderName() { return 'shaders/simpleVS.glsl'; }
@@ -55,11 +55,26 @@ export default class Mandelbrot extends Renderable {
     update() {
         let input = this.engine.getInput();
 
+        // Pan left, right, up and down
         if (input.isKeyPressed(input.Keys.Right)) {
-            this.scale += 0.05;
+            this.offset[0] += this.scale / 25;
         }
         if (input.isKeyPressed(input.Keys.Left)) {
-            this.scale -= 0.05;
+            this.offset[0] -= this.scale / 25;
+        }
+        if (input.isKeyPressed(input.Keys.Up)) {
+            this.offset[1] += this.scale / 25;
+        }
+        if (input.isKeyPressed(input.Keys.Down)) {
+            this.offset[1] -= this.scale / 25;
+        }
+        
+        // Zoom in and out
+        if (input.isKeyPressed(input.Keys.Z)) {
+            this.scale *= 0.975; // zoomin
+        }
+        if (input.isKeyPressed(input.Keys.X)) {
+            this.scale /= 0.975; // zoomout
         }
     }
 
@@ -76,7 +91,8 @@ export default class Mandelbrot extends Renderable {
             0);             // offsets to the first element
 
         gl.enableVertexAttribArray(Mandelbrot.shader.getPositionLocation());
-        gl.uniform2f(Mandelbrot.shader.getCanvasSizeUniform, this.canvasSize[0], this.canvasSize[1]);
+        // console.log(this.canvasSize[0], this.canvasSize[1]);
+        gl.uniform2f(Mandelbrot.shader.canvasSizeUniform, this.canvasSize[0], this.canvasSize[1]);
         gl.uniform2f(Mandelbrot.shader.offsetUniform, this.offset[0], this.offset[1]);
         gl.uniform1f(Mandelbrot.shader.scaleUniform, this.scale);
         // Mandelbrot.shader.activate();
