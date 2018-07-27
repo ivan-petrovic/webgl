@@ -23,6 +23,8 @@ export default class {
     }
 
     getCanvasElement() { return this.canvas; }
+    getCanvasWidth() { return this.width; }
+    getCanvasHeight() { return this.height; }
     getWebGLContext() { return this.gl; }
     getInput() { return this.input; }
     getResources() { return this.resources; }

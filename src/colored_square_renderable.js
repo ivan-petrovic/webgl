@@ -1,8 +1,8 @@
 "use strict";
 
-import Renderable from './renderable';
+import Renderable from './engine/renderable';
 import ConstColorShader from './const_color_shader';
-import VertexBuffer from './buffer';
+import VertexBuffer from './engine/buffer';
 
 // Next two properties are shared by all instances of class (static properties)
 let _shader = null;         // the shader for shading this object

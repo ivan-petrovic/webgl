@@ -1,6 +1,6 @@
 "use strict";
 
-import Shader from './shader';
+import Shader from './engine/shader';
 
 export default class extends Shader {
     constructor(vertexShaderId, fragmentShaderId) {
