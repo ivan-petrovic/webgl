@@ -1,12 +1,26 @@
 "use strict";
 
 import MnEngine from './engine/engine';
-import Mandelbrot from './mandelbrot';
+import Camera from './engine/camera';
+import TexturedSquare from './textured_square_renderable';
+import Grid from './grid_renderable';
 
 export function main() {
     let engine = new MnEngine();
-    let fractal = new Mandelbrot(engine);
+    let camera = new Camera(
+        vec3.fromValues(0.0, 0.0, 10.0), // position
+        vec3.fromValues(0.0, 0.0, 0.0),  // lookAt
+        80.0,                            // width
+        [0, 0, 640, 480]                 // viewportArray
+    );
+    engine.setCamera(camera);
 
-    engine.addRenderable(fractal);
+    let grid = new Grid(engine, -20.0, -20.0, 40.0, 40.0, 5, 5);
+    let square = new TexturedSquare(engine, 0.0, 0.0, 8.0, 8.0, 'images/bubble-guppies.png');
+    square.setGrid(grid);
+
+    engine.addRenderable(grid);
+    engine.addRenderable(square);
+
     engine.loadResourcesAndStart();
 }

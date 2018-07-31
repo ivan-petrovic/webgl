@@ -61,9 +61,19 @@ export default class {
         return (resourceName in this.resourceMap);
     }
 
+    incAssetRefCount(resourceName) {
+        this.resourceMap[resourceName].refCount += 1;
+    }
+
     unloadAsset(resourceName) {
+        var c = 0;
         if (resourceName in this.resourceMap) {
-            delete this.resourceMap[resourceName];
+            this.resourceMap[resourceName].refCount -= 1;
+            c = this.resourceMap[resourceName].refCount;
+            if (c === 0) {
+                delete this.resourceMap[resourceName];
+            }
         }
+        return c;
     }
 }

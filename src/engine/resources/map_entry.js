@@ -6,5 +6,6 @@
 export default class {
     constructor(resourceName) {
         this.asset = resourceName;
+        this.refCount = 1;
     }
 }

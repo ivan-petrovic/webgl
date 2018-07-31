@@ -1,6 +1,7 @@
 "use strict";
 
 import ResourceMap from './resources/resource_map';
+import TextureLoader from './resources/texture_loader';
 import TextFileLoader from './resources/text_file_loader';
 import Input from './input';
 
@@ -17,7 +18,9 @@ export default class {
         this.renderables = [];
 
         this.resources = new ResourceMap();  // should be singleton (for now that is not implemented)
+
         this.textFileLoader = new TextFileLoader(this.resources);
+        this.textureLoader = new TextureLoader(this.gl, this.resources);
         
         this.input = new Input(this.canvas);
     }
@@ -29,6 +32,7 @@ export default class {
     getInput() { return this.input; }
     getResources() { return this.resources; }
     getTextFileLoader() { return this.textFileLoader; }
+    getTextureLoader() { return this.textureLoader; }
     getCamera() { return this.camera; }
 
     setCamera(camera) { this.camera = camera; }
@@ -39,8 +43,9 @@ export default class {
         this.input.initialize();
     
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         // gl.blendFunc(gl.SRC_COLOR,gl.ONE_MINUS_SRC_COLOR);
-        // gl.enable(gl.BLEND);
+        gl.enable(gl.BLEND);
     }
 
     addRenderable(renderable) {
