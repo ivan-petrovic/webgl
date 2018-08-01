@@ -46,6 +46,8 @@ export default class {
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         // gl.blendFunc(gl.SRC_COLOR,gl.ONE_MINUS_SRC_COLOR);
         gl.enable(gl.BLEND);
+
+        gl.enable(gl.DEPTH_TEST);
     }
 
     addRenderable(renderable) {
@@ -75,6 +77,9 @@ export default class {
 
         // Update
         this.input.update();
+        if(this.camera !== null) {
+            this.camera.update(this.input);
+        }
         for (let renderable of this.renderables) {
             renderable.update();
         }
@@ -84,7 +89,7 @@ export default class {
         // 1. Clear screen
         let gl = this.gl;
         // gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        // gl.clear(gl.COLOR_BUFFER_BIT);
+        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         // 2. Draw scene
         if(this.camera !== null) {

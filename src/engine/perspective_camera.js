@@ -16,13 +16,13 @@ export default class {
     //      
     //  height = width * viewport[3]/viewport[2]
     //
-    constructor(position, lookAt, width, viewportArray) {
+    constructor(position, lookAt, fovy, viewportArray) {
         // WC and viewport position and size
         this.position = position;
         this.lookAt = lookAt;
-        this.width = width;
+        this.fovy = fovy;
         this.viewportArray = viewportArray;  // [x, y, width, height]
-        this.nearPlane = 0.0;
+        this.nearPlane = 1.0;
         this.farPlane = 1000.0;
 
         // transformation matrices
@@ -41,7 +41,7 @@ export default class {
     }
     getposition() { return this.position; }
 
-    setWidth(width) { this.width = width; }
+    setFovy(fovy) { this.fovy = fovy; }
 
     setViewport(viewportArray) { this.viewportArray = viewportArray; }
     getViewport() { return this.viewportArray; }
@@ -73,18 +73,26 @@ export default class {
             [0, 1.0, 0]);     // up direction (orientation)
 
         // Define the projection matrix
-        let halfWCWidth = 0.5 * this.width;
+        let halfWCWidth = 10.0;;
         let halfWCHeight = halfWCWidth * this.viewportArray[3] / this.viewportArray[2]; // viewportH/viewportW
-        mat4.ortho(this.projMatrix,
-            -halfWCWidth,     // distance to left of WC
-            halfWCWidth,      // distance to right of WC
-            -halfWCHeight,    // distance to bottom of WC
-            halfWCHeight,     // distance to top of WC
+        mat4.perspective(this.projMatrix,
+            this.fovy,     // Vertical field of view in radians
+            halfWCWidth / halfWCHeight,      // Aspect ratio. typically viewport width/height
             this.nearPlane,  // z-distance to near plane 
             this.farPlane    // z-distance to far plane 
         );
 
         // Concatenate project and view matrices
         mat4.multiply(this.PVMatrix, this.projMatrix, this.viewMatrix);
+    }
+
+    update(input) {
+        // Zoom in and out
+        if (input.isKeyPressed(input.Keys.Z)) {
+            this.position[2] *= 0.975; // zoomin
+        }
+        if (input.isKeyPressed(input.Keys.X)) {
+            this.position[2] /= 0.975; // zoomout
+        }
     }
 }
