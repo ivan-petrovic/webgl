@@ -14,7 +14,7 @@ export function main() {
     );
     engine.setCamera(camera);
 
-    let icosahedron = new Icosahedron(engine, 1.0, 1);
+    let icosahedron = new Icosahedron(engine, 1.0, 2);
     engine.addRenderable(icosahedron);
 
     engine.loadResourcesAndStart();

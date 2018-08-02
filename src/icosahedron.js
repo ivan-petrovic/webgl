@@ -65,16 +65,16 @@ export default class Icosahedron extends Renderable {
 
         if(Icosahedron.vertexBuffer === null) {
             // For each face of icosahedron (20 faces * 3 vertices per face)
-            // for (let i = 0; i < 60; i += 3) {
-                let i = 0;
+            for (let i = 0; i < 60; i += 3) {
+                // let i = 0;
                 this.subdivide(
                     this.baseVertices[this.indices[i + 0]],
                     this.baseVertices[this.indices[i + 1]],
                     this.baseVertices[this.indices[i + 2]],
                     this.depth
                 );
-            // }
-          
+            }
+            console.log('this.vertices.length', this.vertices.length);          
             Icosahedron.vertexBuffer = new VertexBuffer(this.vertices, null);
             Icosahedron.vertexBuffer.initialize(this.engine.getWebGLContext());
         }
@@ -84,20 +84,22 @@ export default class Icosahedron extends Renderable {
         let v12 = vec3.fromValues(0.0, 0.0, 0.0);
         let v23 = vec3.fromValues(0.0, 0.0, 0.0);
         let v31 = vec3.fromValues(0.0, 0.0, 0.0);
-
+        // console.log('depth: ', depth);
         if (depth === 0) {
-            // console.log(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v3[0], v3[1], v3[2]);
+            // console.log('v1: ', vec3.str(v1));
+            // console.log('v2: ', vec3.str(v2));
+            // console.log('v3: ', vec3.str(v3));
             this.vertices.push(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v3[0], v3[1], v3[2]);
             // console.log(this.vertices);
             return;
         }
         // console.log('didn\'t get here');
         // for(let i = 0; i < 3; i += 1) {
-            console.log(vec3.str(v12));
+            // console.log(vec3.str(v12));
             vec3.add(v12, v1, v2); 
-            console.log(vec3.str(v12));
+            // console.log(vec3.str(v12));
             vec3.scale(v12, v12, 0.5);
-            console.log(vec3.str(v12));
+            // console.log(vec3.str(v12));
             
             vec3.add(v23, v2, v3); vec3.scale(v23, v23, 0.5);
             
@@ -114,9 +116,9 @@ export default class Icosahedron extends Renderable {
         // v23.Normalize();
         // v31.Normalize();
 
-        vec3.scale(v12, v12, this.radius);
-        vec3.scale(v23, v23, this.radius);
-        vec3.scale(v31, v31, this.radius);
+        // vec3.scale(v12, v12, this.radius);
+        // vec3.scale(v23, v23, this.radius);
+        // vec3.scale(v31, v31, this.radius);
         // v12 *= radius;
         // v23 *= radius;
         // v31 *= radius;
@@ -160,11 +162,10 @@ export default class Icosahedron extends Renderable {
         gl.uniformMatrix4fv(Icosahedron.shader.PVMTransformLocation, false, pvmMatrix);
         gl.uniform4fv(Icosahedron.shader.colorLocation, this.color);
 
-        // for(let i = 0; i < 60; i += 3) {
-        //     gl.drawArrays(gl.LINE_LOOP, i, 3);
-        // }
-        console.log('this.vertices.length', this.vertices.length);
-        gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length / 3);
+        for(let i = 0; i < this.vertices.length / 3; i += 3) {
+            gl.drawArrays(gl.LINE_LOOP, i, 3);
+        }
+        // gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length / 3);
         // gl.drawElements(gl.TRIANGLES, 60, gl.UNSIGNED_BYTE, 0);
     }
 }
