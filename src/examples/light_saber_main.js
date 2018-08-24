@@ -1,6 +1,6 @@
 "use strict";
 
-import MnEngine from './engine';
+import MnEngine from './engine/engine';
 import LightSaber from './light_saber_renderable';
 
 export function main() {

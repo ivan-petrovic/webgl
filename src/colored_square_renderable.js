@@ -44,6 +44,7 @@ export default class ColoredSquare extends Renderable {
     setPositionOnGrid(row, column) {
         this.row = row;
         this.column = column;
+        this.getPositionOnGrid();
     }
     getPositionOnGrid() {
         let position = this.grid.getCellCenter(this.row, this.column);
@@ -90,7 +91,8 @@ export default class ColoredSquare extends Renderable {
         if (input.isKeyPressed(input.Keys.Right)) {
             if(!this.isMoving()) {
                 this.movingRight = true;
-                this.column = this.grid.getNextRight(this.column);
+                this.column = this.grid.getNextRight(this.row, this.column);
+                // console.log('right' + this.column);
                 this.goalPosition = this.grid.getCellCenter(this.row, this.column);
             }
         }
@@ -98,7 +100,8 @@ export default class ColoredSquare extends Renderable {
         if (input.isKeyPressed(input.Keys.Left)) {
             if(!this.isMoving()) {
                 this.movingLeft = true;
-                this.column = this.grid.getNextLeft(this.column);
+                this.column = this.grid.getNextLeft(this.row, this.column);
+                // console.log('left' + this.column);
                 this.goalPosition = this.grid.getCellCenter(this.row, this.column);
             }
         }
@@ -106,7 +109,8 @@ export default class ColoredSquare extends Renderable {
         if (input.isKeyPressed(input.Keys.Up)) {
             if(!this.isMoving()) {
                 this.movingUp = true;
-                this.row = this.grid.getNextUp(this.row);
+                this.row = this.grid.getNextUp(this.row, this.column);
+                // console.log('up' + this.row);
                 this.goalPosition = this.grid.getCellCenter(this.row, this.column);
             }
         }
@@ -114,7 +118,8 @@ export default class ColoredSquare extends Renderable {
         if (input.isKeyPressed(input.Keys.Down)) {
             if(!this.isMoving()) {
                 this.movingDown = true;
-                this.row = this.grid.getNextDown(this.row);
+                this.row = this.grid.getNextDown(this.row, this.column);
+                // console.log('down' + this.row);
                 this.goalPosition = this.grid.getCellCenter(this.row, this.column);
             }
         }

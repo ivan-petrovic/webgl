@@ -1,7 +1,7 @@
 "use strict";
 
-import MnEngine from './engine';
-import Camera from './camera';
+import MnEngine from './engine/engine';
+import Camera from './engine/camera';
 import ColoredSquare from './colored_square_renderable';
 
 export function main() {

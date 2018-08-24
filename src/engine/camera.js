@@ -87,4 +87,14 @@ export default class {
         // Concatenate project and view matrices
         mat4.multiply(this.PVMatrix, this.projMatrix, this.viewMatrix);
     }
+
+    update(input) {
+        // Zoom in and out
+        if (input.isKeyPressed(input.Keys.Z)) {
+            this.width *= 0.975; // zoomin
+        }
+        if (input.isKeyPressed(input.Keys.X)) {
+            this.width /= 0.975; // zoomout
+        }
+    }
 }
