@@ -1,26 +1,20 @@
 "use strict";
 
 export default class {
-    constructor(vertexShaderId, fragmentShaderId) {
-        this.vertexShaderId = vertexShaderId;
-        this.fragmetShaderId = fragmentShaderId;
+    constructor(vertex_shader_name, fragment_shader_name) {
+        this.vertex_shader_name = vertex_shader_name;
+        this.fragment_shader_name = fragment_shader_name;
         this.program = null;
     }
 
     initialize(resources, gl) {
-        let vertexShader;
-        let fragmentShader;
+        let vertexShaderId;
+        let fragmentShaderId;
     
-        vertexShader = this._compileShader(this.vertexShaderId, gl.VERTEX_SHADER, resources, gl);
-        fragmentShader = this._compileShader(this.fragmetShaderId, gl.FRAGMENT_SHADER, resources, gl);
+        vertexShaderId = this._compileShader(this.vertex_shader_name, gl.VERTEX_SHADER, resources, gl);
+        fragmentShaderId = this._compileShader(this.fragment_shader_name, gl.FRAGMENT_SHADER, resources, gl);
 
-        this.program = this._linkProgram(vertexShader, fragmentShader, gl);
-        
-        this.getLocations(gl);
-    }
-
-    // Should be implemented by subclasses of this parent shader class.
-    getLocations(gl) {
+        this.program = this._linkProgram(vertexShaderId, fragmentShaderId, gl);
     }
 
     activate(gl) {

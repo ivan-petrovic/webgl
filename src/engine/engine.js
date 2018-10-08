@@ -3,12 +3,13 @@
 import ResourceMap from './resources/resource_map';
 import TextureLoader from './resources/texture_loader';
 import TextFileLoader from './resources/text_file_loader';
+import ShaderLibrary from './resources/shader_library';
 import Input from './input';
 
 export default class {
     constructor() {
         this.canvas = document.getElementById('glscreen');
-        this.gl     = this.canvas.getContext('webgl', {alpha: false})  || this.canvas.getContext('experimental-webgl', {alpha: false});
+        this.gl     = this.canvas.getContext('webgl', {alpha: false}) || this.canvas.getContext('experimental-webgl', {alpha: false});
         this.width  = this.gl.drawingBufferWidth;
         this.height = this.gl.drawingBufferHeight;
 
@@ -18,6 +19,7 @@ export default class {
         this.renderables = [];
 
         this.resources = new ResourceMap();  // should be singleton (for now that is not implemented)
+        this.shaders = new ShaderLibrary(this.resources, this.gl);
 
         this.textFileLoader = new TextFileLoader(this.resources);
         this.textureLoader = new TextureLoader(this.gl, this.resources);
@@ -31,6 +33,7 @@ export default class {
     getWebGLContext() { return this.gl; }
     getInput() { return this.input; }
     getResources() { return this.resources; }
+    getShadersLibrary() { return this.shaders; }
     getTextFileLoader() { return this.textFileLoader; }
     getTextureLoader() { return this.textureLoader; }
     getCamera() { return this.camera; }
