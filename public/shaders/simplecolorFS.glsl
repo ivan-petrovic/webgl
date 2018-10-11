@@ -4,9 +4,8 @@
     precision mediump float;
 #endif
 
-// Color of pixel
-uniform vec4 u_PixelColor;
+uniform vec4 u_pixel_color;
 
 void main() {
-    gl_FragColor = u_PixelColor;
+    gl_FragColor = u_pixel_color;
 }

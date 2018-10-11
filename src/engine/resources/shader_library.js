@@ -9,6 +9,9 @@ class Shader {
         this.vertex_shader_id = null;
         this.fragment_shader_id = null;
         this.program_id = null;
+
+        this.attributes = {};
+        this.uniforms = {};
     }
 
     create(vertex_shader_source, fragment_shader_source, gl) {
@@ -17,10 +20,37 @@ class Shader {
 
         this.program_id = this._linkProgram(this.vertex_shader_id, this.fragment_shader_id, gl);
         gl.useProgram(this.program_id);
+
+        this.get_locations(vertex_shader_source, gl);
+        this.get_locations(fragment_shader_source, gl);
     }
 
     activate(gl) {
         gl.useProgram(this.program_id);
+    }
+
+    get_locations(shader_source, gl) {
+        let lines = shader_source.split("\n");
+        console.log("LINES");
+        console.log(lines);
+        lines.forEach(line => {
+            let tokens = line.split(" ");
+
+            console.log("TOKENS");
+            console.log(tokens);
+    
+            if (tokens[0] === "attribute") {
+                let name = tokens[2].slice(0, -1);   // trim ';'
+                this.attributes[name] = gl.getAttribLocation(this.program_id, name);
+                console.log("ATRIBUTE TOKEN: " + name);
+            }
+
+            if (tokens[0] === "uniform") {
+                let name = tokens[2].slice(0, -1);   // trim ';'
+                this.uniforms[name] = gl.getUniformLocation(this.program_id, name);
+                console.log("UNIFORM TOKEN: " + name);
+            }
+        });
     }
 
     _compileShader(shader_source, shader_type, gl) {

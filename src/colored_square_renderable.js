@@ -63,10 +63,19 @@ export default class ColoredSquare extends Renderable {
 
     initialize() {
         let gl = this.engine.getWebGLContext();
-        this._shader_program = this.engine.getShadersLibrary().retrieveShader(ColoredSquare.vertexShaderName, ColoredSquare.fragmentShaderName).program_id;
-        this.positionLocation = gl.getAttribLocation(this._shader_program, "a_position");
-        this.PVMTransformLocation = gl.getUniformLocation(this._shader_program, "u_PVMTransform");
-        this.colorLocation = gl.getUniformLocation(this._shader_program, "u_PixelColor");
+        this._shader_program = this.engine.getShadersLibrary().retrieveShader(ColoredSquare.vertexShaderName, ColoredSquare.fragmentShaderName);
+        // this.positionLocation = gl.getAttribLocation(this._shader_program.program_id, "a_position");
+        // this.PVMTransformLocation = gl.getUniformLocation(this._shader_program.program_id, "u_PVM_transform");
+        // this.colorLocation = gl.getUniformLocation(this._shader_program.program_id, "u_PixelColor");
+        // console.log('this.positionLocation ' + this.positionLocation);
+        // console.log('this.PVMTransformLocation ' + this.PVMTransformLocation);
+        // console.log('this.colorLocation ' + this.colorLocation);
+        // console.log("SHADER PROGRAM:");
+        // console.log(this._shader_program);
+        // console.log("ATTRIBUTES:");
+        // console.log(this._shader_program.attributes);
+        // console.log("UNIFORMS:");
+        // console.log(this._shader_program.uniforms);
 
         if(ColoredSquare.vertexBuffer === null) {
             let verticesOfSquare = [
@@ -194,16 +203,16 @@ export default class ColoredSquare extends Renderable {
         gl.bindBuffer(gl.ARRAY_BUFFER, ColoredSquare.vertexBuffer.getId());
 
         // Describe the characteristic of the vertex position attribute
-        gl.vertexAttribPointer(this.positionLocation,
+        gl.vertexAttribPointer(this._shader_program.attributes.a_position, // this.positionLocation,
             3,              // each element is a 3-float (x,y,z)
             gl.FLOAT,       // data type is FLOAT
             false,          // if the content is normalized vectors
             0,              // number of bytes to skip in between elements
             0);             // offsets to the first element
 
-        gl.enableVertexAttribArray(this.positionLocation);
-        gl.uniformMatrix4fv(this.getPVMTransformLocation, false, pvmMatrix);
-        gl.uniform4fv(this.colorLocation, this.color);
+        gl.enableVertexAttribArray(this._shader_program.attributes.a_position);
+        gl.uniformMatrix4fv(this._shader_program.uniforms.u_PVM_transform, false, pvmMatrix);
+        gl.uniform4fv(this._shader_program.uniforms.u_PixelColor, this.color);
         // gl.uniform1f(ColoredSquare.shader.getDistanceLocation(), this.distance);
         // gl.uniform4fv(ColoredSquare.shader.getPointsLocation(), [this.p1x,this.p1y,this.p2x,this.p2y]);
         // ColoredSquare.shader.activate();
