@@ -59,23 +59,25 @@ export default class {
                     this.viewportArray[1],  // y position of bottom-left corner of the area to be drawn
                     this.viewportArray[2],  // width of the area to be drawn
                     this.viewportArray[3]); // height of the area to be drawn
-        // console.log(this.viewportArray);
+
         // set the color to be cleared
         gl.clearColor(this.bgColor[0], this.bgColor[1], this.bgColor[2], this.bgColor[3]);
-        // gl.clear(gl.COLOR_BUFFER_BIT);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         // Set up the Projection-View transform operator
         // Define the view matrix
-        mat4.lookAt(this.viewMatrix,
+        mat4.lookAt(
+            this.viewMatrix,
             this.position,
             this.lookAt,
-            [0, 1.0, 0]);     // up direction (orientation)
+            [0, 1.0, 0]     // up direction (orientation)
+        );
 
         // Define the projection matrix
         let halfWCWidth = 0.5 * this.width;
         let halfWCHeight = halfWCWidth * this.viewportArray[3] / this.viewportArray[2]; // viewportH/viewportW
-        mat4.ortho(this.projMatrix,
+        mat4.ortho(
+            this.projMatrix,
             -halfWCWidth,     // distance to left of WC
             halfWCWidth,      // distance to right of WC
             -halfWCHeight,    // distance to bottom of WC
@@ -88,13 +90,5 @@ export default class {
         mat4.multiply(this.PVMatrix, this.projMatrix, this.viewMatrix);
     }
 
-    update(input) {
-        // Zoom in and out
-        if (input.isKeyPressed(input.Keys.Z)) {
-            this.width *= 0.975; // zoomin
-        }
-        if (input.isKeyPressed(input.Keys.X)) {
-            this.width /= 0.975; // zoomout
-        }
-    }
+    update(input) {}
 }

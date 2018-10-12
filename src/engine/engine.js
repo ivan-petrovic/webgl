@@ -37,7 +37,6 @@ export default class {
     getTextFileLoader() { return this.textFileLoader; }
     getTextureLoader() { return this.textureLoader; }
     getCamera() { return this.camera; }
-
     setCamera(camera) { this.camera = camera; }
 
     initialize() {
@@ -45,11 +44,10 @@ export default class {
 
         this.input.initialize();
     
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        // gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         // gl.blendFunc(gl.SRC_COLOR,gl.ONE_MINUS_SRC_COLOR);
-        gl.enable(gl.BLEND);
-
+        // gl.enable(gl.BLEND);
         gl.enable(gl.DEPTH_TEST);
     }
 
@@ -59,7 +57,7 @@ export default class {
 
     loadResourcesAndStart() {
         for (let renderable of this.renderables) {
-            renderable.loadResources();
+            renderable.load_resources();
         }
         this.resources.setLoadCompleteCallback( () => this.start() );
     }
@@ -73,7 +71,7 @@ export default class {
     }
 
     render(now) {
-        // window.requestAnimationFrame((now) => this.render(now));
+        window.requestAnimationFrame((now) => this.render(now));
     
         let dt = now - (this.time || now);
         this.time = now;
@@ -84,19 +82,17 @@ export default class {
             this.camera.update(this.input);
         }
         for (let renderable of this.renderables) {
-            renderable.update();
+            renderable.update(this.input);
         }
 
-        // Draw
-
-        // 1. Clear screen
+        // Clear screen and draw scene
         let gl = this.gl;
-        // gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        // 2. Draw scene
         if(this.camera !== null) {
             this.camera.setupProjectionViewMatrix(gl);
+        } else {
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         }
         for (let renderable of this.renderables) {
             renderable.draw(gl);
