@@ -28,6 +28,7 @@ export default class {
     }
 
     getId() { return this.vertexBufferId; }
+    get id() { return this.vertexBufferId; }
     getVertexBufferId() { return this.vertexBufferId; }
     getIndexBufferId() { return this.indexBufferId; }
 }

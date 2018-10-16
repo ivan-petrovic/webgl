@@ -51,7 +51,7 @@ export default class Icosahedron extends Renderable {
     
     loadResources() {
         // Load necessery shader files asynchroniously
-        let textFileLoader = this.engine.getTextFileLoader();
+        let textFileLoader = this.engine.text_file_loader;
 
         textFileLoader.loadTextFile(Icosahedron.vertexShaderName, textFileLoader.eTextFileType.eTextFile);
         textFileLoader.loadTextFile(Icosahedron.fragmentShaderName, textFileLoader.eTextFileType.eTextFile);
@@ -60,7 +60,7 @@ export default class Icosahedron extends Renderable {
     initialize() {
         if(Icosahedron.shader === null) {
             Icosahedron.shader = new ConstColorShader(Icosahedron.vertexShaderName, Icosahedron.fragmentShaderName);
-            Icosahedron.shader.initialize(this.engine.getResources(), this.engine.getWebGLContext());
+            Icosahedron.shader.initialize(this.engine.resources, this.engine.webgl_context);
         }
 
         if(Icosahedron.vertexBuffer === null) {
@@ -76,7 +76,7 @@ export default class Icosahedron extends Renderable {
             }
             console.log('this.vertices.length', this.vertices.length);          
             Icosahedron.vertexBuffer = new VertexBuffer(this.vertices, null);
-            Icosahedron.vertexBuffer.initialize(this.engine.getWebGLContext());
+            Icosahedron.vertexBuffer.initialize(this.engine.webgl_context);
         }
     }
 
@@ -130,7 +130,7 @@ export default class Icosahedron extends Renderable {
     }
 
     draw(gl) {
-        let camera = this.engine.getCamera();
+        let camera = this.engine.camera;
         let pvmMatrix = mat4.create();
         let modelMatrix = mat4.create(); // Creates a blank identity matrix
         

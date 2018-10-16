@@ -6,7 +6,7 @@ export default class {
         this.engine = engine;                   // engine used for rendering
         this.vertex_shader_name = vertex_shader_name;
         this.fragment_shader_name = fragment_shader_name;
-        this._shader_program = null;         // the shader for shading this object
+        this.shader = null;         // the shader program for shading this object
 
         this.behaviours = [];
     }
@@ -14,14 +14,14 @@ export default class {
     // 1. loadResources is called by engine to load necessery assets
     //    for given renderable object (e.g. shader files, images for texture,...)
     load_resources() {
-        let textFileLoader = this.engine.getTextFileLoader();
+        let textFileLoader = this.engine.text_file_loader;
         textFileLoader.loadTextFile(this.vertex_shader_name, textFileLoader.eTextFileType.eTextFile);
         textFileLoader.loadTextFile(this.fragment_shader_name, textFileLoader.eTextFileType.eTextFile);
     }
 
     // 2. initialize is called by engine after resources are loaded
     initialize() {
-        this._shader_program = this.engine.getShadersLibrary().retrieve_shader(this.vertex_shader_name, this.fragment_shader_name);
+        this.shader = this.engine.retrieve_shader(this.vertex_shader_name, this.fragment_shader_name);
     }
 
     // 3. update is called every frame to update state of renderable object

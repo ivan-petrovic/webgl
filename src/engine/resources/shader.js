@@ -19,7 +19,6 @@ export default class {
         this.fragment_shader_id = this._compileShader(fragment_shader_source, gl.FRAGMENT_SHADER, gl);
 
         this.program_id = this._linkProgram(this.vertex_shader_id, this.fragment_shader_id, gl);
-        // ? gl.useProgram(this.program_id);
 
         this._get_locations(vertex_shader_source, gl);
         this._get_locations(fragment_shader_source, gl);
@@ -37,12 +36,14 @@ export default class {
 
             if (tokens[0] === "attribute") {
                 let name = tokens[2].slice(0, -1);   // trim ';'
-                this.attributes[name] = gl.getAttribLocation(this.program_id, name);
+                let name_without_prefix = tokens[2].slice(2, -1);   // trim 'a_' in beginning and ';' at end
+                this.attributes[name_without_prefix] = gl.getAttribLocation(this.program_id, name);
             }
 
             if (tokens[0] === "uniform") {
                 let name = tokens[2].slice(0, -1);   // trim ';'
-                this.uniforms[name] = gl.getUniformLocation(this.program_id, name);
+                let name_without_prefix = tokens[2].slice(2, -1);   // trim 'u_' in beginning and ';' at end
+                this.uniforms[name_without_prefix] = gl.getUniformLocation(this.program_id, name);
             }
         });
     }

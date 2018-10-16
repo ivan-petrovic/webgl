@@ -29,14 +29,14 @@ export default class ColoredSquare extends Renderable {
     
     loadResources() {
         // Load necessery shader files asynchroniously
-        let textFileLoader = this.engine.getTextFileLoader();
+        let textFileLoader = this.engine.text_file_loader;
         textFileLoader.loadTextFile(ColoredSquare.vertexShaderName, textFileLoader.eTextFileType.eTextFile);
         textFileLoader.loadTextFile(ColoredSquare.fragmentShaderName, textFileLoader.eTextFileType.eTextFile);
     }
 
     initialize() {
-        let gl = this.engine.getWebGLContext();
-        this._shader_program = this.engine.getShadersLibrary().retrieveShader(ColoredSquare.vertexShaderName, ColoredSquare.fragmentShaderName);
+        let gl = this.engine.webgl_context;
+        this._shader_program = this.engine.shaders_library.retrieveShader(ColoredSquare.vertexShaderName, ColoredSquare.fragmentShaderName);
         this.positionLocation = gl.getAttribLocation(this._shader_program.program_id, "a_position");
         this.colorLocation = gl.getUniformLocation(this._shader_program.program_id, "u_pixel_color");
         this.PVMTransformLocation = gl.getUniformLocation(this._shader_program.program_id, "u_PVM_transform");
@@ -55,7 +55,7 @@ export default class ColoredSquare extends Renderable {
     }
 
     draw(gl) {
-        let camera = this.engine.getCamera();
+        let camera = this.engine.camera;
         let pvm_matrix = camera.getPVMatrix();
 
         this._shader_program.activate(gl);

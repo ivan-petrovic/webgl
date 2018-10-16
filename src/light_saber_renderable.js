@@ -35,7 +35,7 @@ export default class LightSaber extends Renderable {
         LightSaber.vertexBuffer = null;
 
         // Load necessery shader files asynchroniously
-        let textFileLoader = this.engine.getTextFileLoader();
+        let textFileLoader = this.engine.text_file_loader;
         textFileLoader.loadTextFile(LightSaber.vertexShaderName, textFileLoader.eTextFileType.eTextFile);
         textFileLoader.loadTextFile(LightSaber.fragmentShaderName, textFileLoader.eTextFileType.eTextFile);
     }
@@ -43,7 +43,7 @@ export default class LightSaber extends Renderable {
     initialize() {
         if(LightSaber.shader === null) {
             LightSaber.shader = new SaberShader(LightSaber.vertexShaderName, LightSaber.fragmentShaderName);
-            LightSaber.shader.initialize(this.engine.getResources(), this.engine.getWebGLContext());
+            LightSaber.shader.initialize(this.engine.resources, this.engine.webgl_context);
         }
 
         if(LightSaber.vertexBuffer === null) {
@@ -54,7 +54,7 @@ export default class LightSaber extends Renderable {
                 -1.0, -1.0, 0.0
             ];
             LightSaber.vertexBuffer = new VertexBuffer(verticesOfSquare);
-            LightSaber.vertexBuffer.initialize(this.engine.getWebGLContext());
+            LightSaber.vertexBuffer.initialize(this.engine.webgl_context);
         }
     }
 

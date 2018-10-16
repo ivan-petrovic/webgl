@@ -19,8 +19,8 @@ export function main() {
     let square = new TexturedSquare(engine, 0.0, 0.0, 8.0, 8.0, 'images/bubble-guppies.png');
     square.setGrid(grid);
 
-    engine.addRenderable(grid);
-    engine.addRenderable(square);
+    engine.add_renderable(grid);
+    engine.add_renderable(square);
 
-    engine.loadResourcesAndStart();
+    engine.load_resources_and_start();
 }

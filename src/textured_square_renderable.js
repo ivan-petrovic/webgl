@@ -63,7 +63,7 @@ export default class TexturedSquare extends Renderable {
 
     loadResources() {
         // Load necessery shader files asynchroniously
-        let textFileLoader = this.engine.getTextFileLoader();
+        let textFileLoader = this.engine.text_file_loader;
         let textureLoader = this.engine.getTextureLoader();
 
         textFileLoader.loadTextFile(TexturedSquare.vertexShaderName, textFileLoader.eTextFileType.eTextFile);
@@ -74,7 +74,7 @@ export default class TexturedSquare extends Renderable {
     initialize() {
         if(TexturedSquare.shader === null) {
             TexturedSquare.shader = new TextureShader(TexturedSquare.vertexShaderName, TexturedSquare.fragmentShaderName);
-            TexturedSquare.shader.initialize(this.engine.getResources(), this.engine.getWebGLContext());
+            TexturedSquare.shader.initialize(this.engine.resources, this.engine.webgl_context);
         }
 
         if(TexturedSquare.vertexBuffer === null) {
@@ -91,7 +91,7 @@ export default class TexturedSquare extends Renderable {
                 0.0, 0.0
             ];
             TexturedSquare.vertexBuffer = new VertexBuffer(verticesOfSquare, textureCoordinates);
-            TexturedSquare.vertexBuffer.initialize(this.engine.getWebGLContext());
+            TexturedSquare.vertexBuffer.initialize(this.engine.webgl_context);
         }
 
         this.initTexture();     // texture for this object, cannot be a "null"
@@ -116,7 +116,7 @@ export default class TexturedSquare extends Renderable {
     }
 
     update() {
-        let input = this.engine.getInput();
+        let input = this.engine.input;
         let speed = 0.4;
 
         if (input.isKeyPressed(input.Keys.Right)) {
@@ -185,7 +185,7 @@ export default class TexturedSquare extends Renderable {
     }
 
     draw(gl) {
-        let camera = this.engine.getCamera();
+        let camera = this.engine.camera;
         let pvmMatrix = mat4.create();
         let modelMatrix = mat4.create(); // Creates a blank identity matrix
         

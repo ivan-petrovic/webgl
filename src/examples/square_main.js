@@ -16,7 +16,7 @@ export function main() {
 
     let square = new Square(engine);
 
-    engine.addRenderable(square);
+    engine.add_renderable(square);
 
-    engine.loadResourcesAndStart();
+    engine.load_resources_and_start();
 }

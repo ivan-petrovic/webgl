@@ -8,8 +8,8 @@ export function main() {
     let saber1 = new LightSaber(engine, -100.0, -100.0, 200.0, 200.0);
     let saber2 = new LightSaber(engine, 200.0, 0.0, 100.0, -200.0);
 
-    engine.addRenderable(saber1);
-    engine.addRenderable(saber2);
+    engine.add_renderable(saber1);
+    engine.add_renderable(saber2);
 
-    engine.loadResourcesAndStart();
+    engine.load_resources_and_start();
 }

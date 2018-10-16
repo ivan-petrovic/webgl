@@ -63,7 +63,7 @@ export default class Grid extends Renderable {
 
     loadResources() {
         // Load necessery shader files asynchroniously
-        let textFileLoader = this.engine.getTextFileLoader();
+        let textFileLoader = this.engine.text_file_loader;
         textFileLoader.loadTextFile(Grid.vertexShaderName, textFileLoader.eTextFileType.eTextFile);
         textFileLoader.loadTextFile(Grid.fragmentShaderName, textFileLoader.eTextFileType.eTextFile);
     }
@@ -71,7 +71,7 @@ export default class Grid extends Renderable {
     initialize() {
         if(Grid.shader === null) {
             Grid.shader = new ConstColorShader(Grid.vertexShaderName, Grid.fragmentShaderName);
-            Grid.shader.initialize(this.engine.getResources(), this.engine.getWebGLContext());
+            Grid.shader.initialize(this.engine.resources, this.engine.webgl_context);
         }
 
         let verticesOfGrid = [];
@@ -87,11 +87,11 @@ export default class Grid extends Renderable {
             verticesOfGrid.push(0.0, linePosition, 0.0, this.width, linePosition, 0.0);
         }
         this.vertexBuffer = new VertexBuffer(verticesOfGrid);
-        this.vertexBuffer.initialize(this.engine.getWebGLContext());
+        this.vertexBuffer.initialize(this.engine.webgl_context);
     }
 /*
     update() {
-        let input = this.engine.getInput();
+        let input = this.engine.input;
 
         if (input.isKeyClicked(input.Keys.Right)) {
             this.originX += 1.0;
@@ -108,7 +108,7 @@ export default class Grid extends Renderable {
     }
 */
     draw(gl) {
-        let camera = this.engine.getCamera();
+        let camera = this.engine.camera;
         let pvmMatrix = mat4.create();
         let modelMatrix = mat4.create(); // Creates a blank identity matrix
         

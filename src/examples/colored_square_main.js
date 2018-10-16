@@ -25,9 +25,9 @@ export function main() {
     let square3 = new ColoredSquare(engine, 0.0, 0.0, 3.0, 3.0);
     square3.setColor([0.0, 0.0, 1.0, 1.0]); // blue
 
-    engine.addRenderable(square1);
-    engine.addRenderable(square2);
-    engine.addRenderable(square3);
+    engine.add_renderable(square1);
+    engine.add_renderable(square2);
+    engine.add_renderable(square3);
 
-    engine.loadResourcesAndStart();
+    engine.load_resources_and_start();
 }

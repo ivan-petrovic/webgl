@@ -7,18 +7,19 @@
 #endif
 precision mediump int;
 
-uniform vec2 uCanvasSize;
-uniform vec2 uOffset;
-uniform float uScale;
+uniform vec2 u_canvas_size;
+uniform vec2 u_offset;
+uniform float u_scale;
 
-vec4 calculateColor(vec2 texCoord) {
+// mandelbrot fractal
+vec4 calculateColor(vec2 tex_coord) {
     float x = 0.0;
     float y = 0.0;
     vec4 color = vec4(0,0,0,1);
 
     for (int iteration = 0; iteration < NUM_STEPS; iteration += 1) {
-        float xtemp = x*x - y*y + texCoord.x;
-        y = 2.0*x*y + texCoord.y;
+        float xtemp = x*x - y*y + tex_coord.x;
+        y = 2.0*x*y + tex_coord.y;
         x = xtemp;
     
         if ( (x*x + y*y) >= 8.0) {
@@ -41,11 +42,11 @@ void main() {
     //     |                 |                |                 |
     //   0 -------------------             -1 -------------------
     //     0                640              -1                 1
-    vec2 texCoord = (gl_FragCoord.xy / uCanvasSize.xy) * 2.0 - vec2(1.0,1.0);
+    vec2 tex_coord = (gl_FragCoord.xy / u_canvas_size.xy) * 2.0 - vec2(1.0,1.0);
 
     // Correct aspect ratio, or change canvas size to square
-    float aspect = uCanvasSize.x / uCanvasSize.y;
-    texCoord.x *= aspect;
+    float aspect = u_canvas_size.x / u_canvas_size.y;
+    tex_coord.x *= aspect;
 
     // Applied scale and offset
     // For example if scale = 2 and offset (-0.5,0)
@@ -56,8 +57,8 @@ void main() {
     //     |                 |                |                 |
     //  -1 -------------------             -2 -------------------
     //    -1                 1              -2.5               1.5
-    texCoord = texCoord * uScale + uOffset;
+    tex_coord = tex_coord * u_scale + u_offset;
 
     // Calculate collor for given coordinate
-    gl_FragColor = calculateColor(texCoord);
+    gl_FragColor = calculateColor(tex_coord);
 }

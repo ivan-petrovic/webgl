@@ -21,8 +21,8 @@ export function main() {
     square.setGrid(grid);
     // square.setPositionOnGrid(4, 3);
 
-    engine.addRenderable(grid);
-    engine.addRenderable(square);
+    engine.add_renderable(grid);
+    engine.add_renderable(square);
 
-    engine.loadResourcesAndStart();
+    engine.load_resources_and_start();
 }

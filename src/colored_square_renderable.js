@@ -34,12 +34,12 @@ export default class ColoredSquare extends Renderable {
                 -0.5, -0.5, 0.0
             ];
             ColoredSquare.vertexBuffer = new VertexBuffer(verticesOfSquare);
-            ColoredSquare.vertexBuffer.initialize(this.engine.getWebGLContext());
+            ColoredSquare.vertexBuffer.initialize(this.engine.webgl_context);
         }
     }
 
     draw(gl) {
-        let camera = this.engine.getCamera();
+        let camera = this.engine.camera;
         let pvmMatrix = mat4.create();
         let modelMatrix = mat4.create(); // Creates a blank identity matrix
         

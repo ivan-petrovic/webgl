@@ -31,7 +31,7 @@ export default class  {
     }
 
     update() {
-        let input = this.engine.getInput();
+        let input = this.engine.input;
         let speed = 0.4;
 
         if (input.isKeyPressed(input.Keys.Right)) {

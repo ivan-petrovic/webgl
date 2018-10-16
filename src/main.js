@@ -7,6 +7,6 @@ export function main() {
     let engine = new MnEngine();
     let fractal = new Mandelbrot(engine);
 
-    engine.addRenderable(fractal);
-    engine.loadResourcesAndStart();
+    engine.add_renderable(fractal);
+    engine.load_resources_and_start();
 }
