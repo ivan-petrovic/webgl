@@ -77,7 +77,7 @@ export default class LightSaber extends Renderable {
 
     draw(gl) {
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, LightSaber.vertexBuffer.getId());
+        gl.bindBuffer(gl.ARRAY_BUFFER, LightSaber.vertexBuffer.id);
 
         // Describe the characteristic of the vertex position attribute
         gl.vertexAttribPointer(LightSaber.shader.getPositionLocation(),

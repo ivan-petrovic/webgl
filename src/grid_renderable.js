@@ -122,7 +122,7 @@ export default class Grid extends Renderable {
         mat4.multiply(pvmMatrix, camera.getPVMatrix(), modelMatrix);
 
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.getId());
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.id);
 
         Grid.shader.activate(gl);
         // Describe the characteristic of the vertex position attribute

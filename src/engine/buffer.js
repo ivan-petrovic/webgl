@@ -1,34 +1,25 @@
+"use strict";
+
+// Data in the form:
+// new Float32Array(this.vertices)
+// new Uint8Array(this.indices)
 export default class {
-    constructor(aVertices, indices) {
-        this.vertices = aVertices;   // vertices of the object
-        this.indices = indices;
-        this.vertexBufferId = null;  // reference to the vertex positions for the square in the gl context
-        this.indexBufferId = null;  // reference to the vertex positions for the square in the gl context
+    constructor(data, type) {
+        this.data = data;       // vertices or indices of the object
+        this.type = type;       // gl.ARRAY_BUFFER or gl.ELEMENT_ARRAY_BUFFER
+        this.buffer_id = null;  // reference to the buffer in the gl context
     }
 
-    // gl - webgl context
     initialize(gl) {
         // Step A: Create a buffer on the WebGL context for our vertex positions
-        this.vertexBufferId = gl.createBuffer();
+        this.buffer_id = gl.createBuffer();
 
         // Step B: Activate vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBufferId);
+        gl.bindBuffer(this.type, this.buffer_id);
 
-        // Step C: Loads vertices into the vertex buffer
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
-
-        if (this.indices !== null) {
-            // Create a buffer object
-            this.indexBufferId = gl.createBuffer();
-
-            // Write the indices to the buffer object
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBufferId);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(this.indices), gl.STATIC_DRAW);
-        }
+        // Step C: Loads data into the buffer
+        gl.bufferData(this.type, this.data, gl.STATIC_DRAW);
     }
 
-    getId() { return this.vertexBufferId; }
-    get id() { return this.vertexBufferId; }
-    getVertexBufferId() { return this.vertexBufferId; }
-    getIndexBufferId() { return this.indexBufferId; }
+    get id() { return this.buffer_id; }
 }

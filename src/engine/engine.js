@@ -46,12 +46,16 @@ export default class {
     retrieve_shader(vertex_shader_file, fragment_shader_file) {
         return this._shaders.retrieve_shader(vertex_shader_file, fragment_shader_file, this._resources, this.gl);
     }
+    
+    retrieve_vbo(vbo_name) {
+        return this._vbos.retrieve_vbo(vbo_name);
+    }
 
     initialize() {
         let gl = this.gl;
 
         this._input.initialize();
-        this._vbos.initialize();
+        this._vbos.initialize(gl);
     
         // gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
         // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);

@@ -1,12 +1,21 @@
 "use strict";
 
 import MnEngine from './engine/engine';
-import Mandelbrot from './mandelbrot';
+import Camera from './engine/perspective_camera';
+import Icosahedron from './icosahedron';
 
 export function main() {
     let engine = new MnEngine();
-    let fractal = new Mandelbrot(engine);
+    let camera = new Camera(
+        vec3.fromValues(0.0, 0.0, 3.0),  // position
+        vec3.fromValues(0.0, 0.0, 0.0),  // lookAt
+        1.0,                             // fovy
+        [0, 0, 640, 480]                 // viewportArray
+    );
+    engine.setCamera(camera);
 
-    engine.add_renderable(fractal);
+    let icosahedron = new Icosahedron(engine, 1.0, 2);
+    engine.add_renderable(icosahedron);
+
     engine.load_resources_and_start();
 }

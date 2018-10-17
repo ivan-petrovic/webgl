@@ -1,6 +1,6 @@
 "use strict";
 
-import VertexBuffer from '../buffer';
+import Buffer from '../buffer';
 
 export default class {
     constructor() {
@@ -29,7 +29,7 @@ export default class {
             1.0, -1.0, 0.0,
             -1.0, -1.0, 0.0
         ];
-        let vertexBuffer = new VertexBuffer(verticesOfSquare);
+        let vertexBuffer = new Buffer(new Float32Array(verticesOfSquare), gl.ARRAY_BUFFER);
         vertexBuffer.initialize(gl);
         this.vbos_map['WHOLE_CANVAS'] = vertexBuffer;
     }

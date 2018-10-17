@@ -61,7 +61,7 @@ export default class ColoredSquare extends Renderable {
         this._shader_program.activate(gl);
 
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, ColoredSquare.vertexBuffer.getId());
+        gl.bindBuffer(gl.ARRAY_BUFFER, ColoredSquare.vertexBuffer.id);
 
         // Describe the characteristic of the vertex position attribute
         gl.vertexAttribPointer(this.positionLocation,

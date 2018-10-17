@@ -1,36 +1,22 @@
 "use strict";
 
 import Renderable from './engine/renderable';
-import VertexBuffer from './engine/buffer';
-
-// Next property is shared by all instances of class (static properties)
-let _vertexBuffer = null;   // the vertex buffer for this object
 
 export default class Mandelbrot extends Renderable {
     constructor(engine) {
         super(engine, 'fractal_vs.glsl', 'fractal_fs.glsl');
+
+        this.vertix_buffer_id = null;
 
         this.canvasSize = [engine.canvas_width, engine.canvas_height];
         this.offset = [-0.5, 0];
         this.scale = 1.0;
     }
 
-    static get vertexBuffer() { return _vertexBuffer; }
-    static set vertexBuffer(value) { _vertexBuffer = value; }
-    
     initialize() {
         super.initialize();
 
-        if(Mandelbrot.vertexBuffer === null) {
-            let verticesOfSquare = [
-                1.0, 1.0, 0.0,
-                -1.0, 1.0, 0.0,
-                1.0, -1.0, 0.0,
-                -1.0, -1.0, 0.0
-            ];
-            Mandelbrot.vertexBuffer = new VertexBuffer(verticesOfSquare);
-            Mandelbrot.vertexBuffer.initialize(this.engine.webgl_context);
-        }
+        this.vertix_buffer_id = this.engine.retrieve_vbo('WHOLE_CANVAS');
     }
 
     update(input) {
@@ -61,7 +47,7 @@ export default class Mandelbrot extends Renderable {
         this.shader.activate(gl);
 
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, Mandelbrot.vertexBuffer.getId());
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertix_buffer_id);
 
         // Describe the characteristic of the vertex position attribute
         gl.vertexAttribPointer(this.shader.attributes.position,

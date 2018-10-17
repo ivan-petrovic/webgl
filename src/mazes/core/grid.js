@@ -259,7 +259,7 @@ export default class Grid extends Renderable {
         mat4.multiply(pvmMatrix, camera.getPVMatrix(), modelMatrix);
 
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.getId());
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.id);
 
         Grid.shader.activate(gl);
         // Describe the characteristic of the vertex position attribute
@@ -278,7 +278,7 @@ export default class Grid extends Renderable {
         gl.drawArrays(gl.LINES, 0, this.num_lines * 2);
 
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.backgroundVertexBuffer.getId());
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.backgroundVertexBuffer.id);
         gl.vertexAttribPointer(Grid.shader.getPositionLocation(),
             3,              // each element is a 3-float (x,y,z)
             gl.FLOAT,       // data type is FLOAT
