@@ -32,6 +32,8 @@ export default class {
 
         // background color
         this.bgColor = [0.8, 0.8, 0.8, 1]; // RGB and Alpha
+
+        this.behaviours = [];
     }
 
     // Getters and setters
@@ -89,12 +91,12 @@ export default class {
     }
 
     update(input) {
-        // Zoom in and out
-        if (input.isKeyPressed(input.Keys.Z)) {
-            this.position[2] *= 0.975; // zoomin
+        for (let behaviour of this.behaviours) {
+            behaviour.update(input);
         }
-        if (input.isKeyPressed(input.Keys.X)) {
-            this.position[2] /= 0.975; // zoomout
-        }
+    }
+
+    add_behaviour(behaviour) {
+        this.behaviours.push(behaviour);
     }
 }

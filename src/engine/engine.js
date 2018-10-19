@@ -37,6 +37,7 @@ export default class {
     get input() { return this._input; }
     get resources() { return this._resources; }
     get shaders_library() { return this._shaders; }
+    get vbos_library() { return this._vbos; }
     get text_file_loader() { return this._text_file_loader; }
     get texture_file_loader() { return this._texture_loader; }
 
