@@ -13,6 +13,7 @@ export default class Icosahedron extends Renderable {
         this.depth = depth;
         this._color = [1.0, 0.0, 0.0, 1.0];  // default red color
         this._position = [0.0, 0.0, 0.0];
+        this._scale = 1.0;
 
         this.vertix_buffer_id = null;
 
@@ -42,6 +43,9 @@ export default class Icosahedron extends Renderable {
 
     set position(position) { this._position = position; }
     get position() { return this._position; }
+
+    set scale(scale) { this._scale = scale; }
+    get scale() { return this._scale; }
 
     initialize() {
         super.initialize();
@@ -96,12 +100,12 @@ export default class Icosahedron extends Renderable {
     }
 
     draw(gl) {
-        if (this.engine.input.isKeyPressed(this.engine.input.Keys.A)) {
-            console.log('ico position: ' + this.position);
-            console.log('ico color:    ' + this.color);
-            console.log('depth:    ' + this.depth);
-            console.log('length:    ' + this.vertices.length);
-        }
+        // if (this.engine.input.isKeyPressed(this.engine.input.Keys.A)) {
+        //     console.log('ico position: ' + this.position);
+        //     console.log('ico color:    ' + this.color);
+        //     console.log('depth:    ' + this.depth);
+        //     console.log('length:    ' + this.vertices.length);
+        // }
 
         let camera = this.engine.camera;
         let pvm_matrix = mat4.create();
@@ -114,7 +118,7 @@ export default class Icosahedron extends Renderable {
         // Step B: concatenate with rotation.
         // mat4.rotateZ(matrix, matrix, this.getRotationInRad());
         // Step C: concatenate with scaling
-        // mat4.scale(model_matrix, model_matrix, vec3.fromValues(this.width, this.height, 1.0));
+        mat4.scale(model_matrix, model_matrix, vec3.fromValues(this.scale, this.scale, this.scale));
 
         mat4.multiply(pvm_matrix, camera.getPVMatrix(), model_matrix);
         this.shader.activate(gl);
