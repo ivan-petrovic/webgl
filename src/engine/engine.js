@@ -18,6 +18,7 @@ export default class {
 
         this._camera = null;
         this._renderables = [];
+        this._light = null;
 
         this._resources = new ResourceMap();  // should be singleton (for now that is not implemented)
         this._shaders = new ShaderLibrary();
@@ -44,6 +45,8 @@ export default class {
     get camera() { return this._camera; }
     set camera(camera) { this._camera = camera; }
 
+    get light() { return this._light; }
+
     retrieve_shader(vertex_shader_file, fragment_shader_file) {
         return this._shaders.retrieve_shader(vertex_shader_file, fragment_shader_file, this._resources, this.gl);
     }
@@ -67,6 +70,10 @@ export default class {
 
     add_renderable(renderable) {
         this._renderables.push(renderable);
+    }
+
+    add_light(light_source) {
+        this._light = light_source;
     }
 
     load_resources_and_start() {

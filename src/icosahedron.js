@@ -7,7 +7,8 @@ const Z = .850650808352039932;
 
 export default class Icosahedron extends Renderable {
     constructor(engine, radius, depth) {
-        super(engine, 'basic_vs.glsl', 'basic_fs.glsl');
+        // super(engine, 'basic_vs.glsl', 'basic_fs.glsl');
+        super(engine, 'goraud_phong_vs.glsl', 'goraud_phong_fs.glsl');
 
         this.radius = radius;
         this.depth = depth;
@@ -15,9 +16,11 @@ export default class Icosahedron extends Renderable {
         this._position = [0.0, 0.0, 0.0];
         this._scale = 1.0;
 
-        this.vertix_buffer_id = null;
+        this.vertex_buffer_id = null;
+        this.normals_buffer_id = null;
 
         this.vertices = [];
+        this.normals = [];
         this.vertices_count = Math.pow(4, this.depth) * 20 * 9; // why 9? 3 cordinates for each vertex of triangle 3 * 3 = 9
 
         // 12 vertices of icosahedron
@@ -50,9 +53,10 @@ export default class Icosahedron extends Renderable {
     initialize() {
         super.initialize();
 
-        this.vertix_buffer_id = this.engine.retrieve_vbo('ICOSAHEDRON');
-        console.log('vbid ' + this.vertix_buffer_id);
-        if(this.vertix_buffer_id === null) {
+        this.vertex_buffer_id = this.engine.retrieve_vbo('ICOSAHEDRON');
+        this.normals_buffer_id = this.engine.retrieve_vbo('ICOSAHEDRON_NORMALS');
+
+        if(this.vertex_buffer_id === null) {
             // For each face of icosahedron (20 faces * 3 vertices per face)
             for (let i = 0; i < 60; i += 3) {
                 this.subdivide(
@@ -65,10 +69,11 @@ export default class Icosahedron extends Renderable {
             
             let gl = this.engine.webgl_context;
             this.engine.vbos_library.add_vbo('ICOSAHEDRON', new Float32Array(this.vertices), gl.ARRAY_BUFFER, gl);
+            this.engine.vbos_library.add_vbo('ICOSAHEDRON_NORMALS', new Float32Array(this.normals), gl.ARRAY_BUFFER, gl);
             
-            this.vertix_buffer_id = this.engine.retrieve_vbo('ICOSAHEDRON');
-            console.log('create and retrieve VBO ' + this.vertix_buffer_id);
-        } else { console.log('retrieve VBO ' + this.vertix_buffer_id); }
+            this.vertex_buffer_id = this.engine.retrieve_vbo('ICOSAHEDRON');
+            this.normals_buffer_id = this.engine.retrieve_vbo('ICOSAHEDRON_NORMALS');
+        }
     }
 
     subdivide(v1,v2,v3, depth) {
@@ -78,6 +83,14 @@ export default class Icosahedron extends Renderable {
 
         if (depth === 0) {
             this.vertices.push(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v3[0], v3[1], v3[2]);
+            
+            let normal = vec3.create();
+            vec3.normalize(normal, v1);
+            this.normals.push(normal[0], normal[1], normal[2]);
+            vec3.normalize(normal, v2);
+            this.normals.push(normal[0], normal[1], normal[2]);
+            vec3.normalize(normal, v3);
+            this.normals.push(normal[0], normal[1], normal[2]);
             return;
         }
         
@@ -108,10 +121,12 @@ export default class Icosahedron extends Renderable {
         // }
 
         let camera = this.engine.camera;
-        let pvm_matrix = mat4.create();
-        let model_matrix = mat4.create(); // Creates a blank identity matrix
+        let light = this.engine.light;
         
-        // model_matrix = mat4.fromTranslation(this.model_matrix, this.position);
+        // let pvm_matrix = mat4.create();
+        let normal_matrix = mat4.create();
+        let model_matrix = mat4.create(); // Creates a blank identity matrix
+        let view_model_matrix = mat4.create(); // Creates a blank identity matrix
         
         // Step A: compute translation, for now z is always at 0.0
         mat4.translate(model_matrix, model_matrix, vec3.fromValues(this._position[0], this._position[1], this._position[2]));
@@ -120,11 +135,18 @@ export default class Icosahedron extends Renderable {
         // Step C: concatenate with scaling
         mat4.scale(model_matrix, model_matrix, vec3.fromValues(this.scale, this.scale, this.scale));
 
-        mat4.multiply(pvm_matrix, camera.getPVMatrix(), model_matrix);
+        // mat4.multiply(pvm_matrix, camera.getPVMatrix(), model_matrix);
+        mat4.multiply(view_model_matrix, camera.view_matrix, model_matrix);
+
+        // mat4.identity(normal_matrix);
+        // mat4.set(normal_matrix, view_model_matrix);
+        mat4.invert(normal_matrix, view_model_matrix);
+        mat4.transpose(normal_matrix, normal_matrix);
+
         this.shader.activate(gl);
         
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertix_buffer_id);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer_id);
 
         // Describe the characteristic of the vertex position attribute
         gl.vertexAttribPointer(this.shader.attributes.position,
@@ -136,13 +158,40 @@ export default class Icosahedron extends Renderable {
 
         gl.enableVertexAttribArray(this.shader.attributes.position);
 
-        gl.uniformMatrix4fv(this.shader.uniforms.PVM_transform, false, pvm_matrix);
-        gl.uniform4fv(this.shader.uniforms.pixel_color, this._color);
+        // Activates the normals buffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normals_buffer_id);
 
-        for(let i = 0; i < this.vertices_count / 3; i += 3) {
-            gl.drawArrays(gl.LINE_LOOP, i, 3);
-        }
-        // gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length / 3);
+        // Describe the characteristic of the vertex position attribute
+        gl.vertexAttribPointer(this.shader.attributes.normal,
+            3,              // each element is a 3-float (x,y,z)
+            gl.FLOAT,       // data type is FLOAT
+            false,          // if the content is normalized vectors
+            0,              // number of bytes to skip in between elements
+            0);             // offsets to the first element
+
+        gl.enableVertexAttribArray(this.shader.attributes.normal);
+        
+        // uniform mat4 u_VM_transform;
+        // uniform mat4 u_P_transform;
+        // uniform mat4 u_N_transform;
+        gl.uniformMatrix4fv(this.shader.uniforms.VM_transform, false, view_model_matrix);
+        gl.uniformMatrix4fv(this.shader.uniforms.P_transform, false, camera.projection_matrix);
+        gl.uniformMatrix4fv(this.shader.uniforms.N_transform, false, normal_matrix);
+
+        gl.uniform3fv(this.shader.uniforms.light_direction, light.direction);
+        gl.uniform4fv(this.shader.uniforms.light_ambient, light.ambient);
+        gl.uniform4fv(this.shader.uniforms.light_diffuse, light.diffuse);
+        gl.uniform4fv(this.shader.uniforms.light_specular, light.specular);
+        gl.uniform1f(this.shader.uniforms.shininess, light.shininess);
+
+        gl.uniform4fv(this.shader.uniforms.material_ambient, [0.1,0.5,0.8,1.0]);
+        gl.uniform4fv(this.shader.uniforms.material_diffuse, [0.1,0.5,0.8,1.0]);
+        gl.uniform4fv(this.shader.uniforms.material_specular, [1.0,1.0,1.0,1.0]);
+
+        // for(let i = 0; i < this.vertices_count / 3; i += 3) {
+        //     gl.drawArrays(gl.LINE_LOOP, i, 3);
+        // }
+        gl.drawArrays(gl.TRIANGLES, 0, this.vertices_count / 3);
         // gl.drawElements(gl.TRIANGLES, 60, gl.UNSIGNED_BYTE, 0);
     }
 }

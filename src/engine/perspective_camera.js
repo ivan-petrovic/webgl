@@ -53,6 +53,9 @@ export default class {
 
     // Getter for the Projection-View transform operator
     getPVMatrix() { return this.PVMatrix; }
+    
+    get view_matrix() { return this.viewMatrix; }
+    get projection_matrix() { return this.projMatrix; }
 
     // Initializes the camera to begin drawing
     setupProjectionViewMatrix(gl) {
