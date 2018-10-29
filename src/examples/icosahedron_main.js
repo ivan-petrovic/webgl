@@ -2,7 +2,10 @@
 
 import MnEngine from './engine/engine';
 import Camera from './engine/perspective_camera';
+import OrbitBehaviour from './orbit_behaviour';
 import Icosahedron from './icosahedron';
+import Axes from './coordinate_axes';
+import Light from './engine/directional_light';
 
 export function main() {
     let engine = new MnEngine();
@@ -12,10 +15,32 @@ export function main() {
         1.0,                             // fovy
         [0, 0, 640, 480]                 // viewportArray
     );
-    engine.setCamera(camera);
+    camera.add_behaviour(new OrbitBehaviour(camera, {
+        'right': engine.input.Keys.D,
+        'left': engine.input.Keys.A,
+        'up': engine.input.Keys.W,
+        'down': engine.input.Keys.S,
+        'zoom_in': engine.input.Keys.J,
+        'zoom_out': engine.input.Keys.K,
+    }));
+    engine.camera = camera;
+    let light = new Light();
+    engine.add_light(light);
 
-    let icosahedron = new Icosahedron(engine, 1.0, 2);
-    engine.add_renderable(icosahedron);
+    let axes = new Axes(engine);
+
+    // let icosahedron1 = new Icosahedron(engine, 1.0, 1);
+    // icosahedron1.add_behaviour(new OrbitBehaviour(icosahedron1));
+    // icosahedron1.position = [0.0, 0.0, 1.0];
+    // icosahedron1.color = [0.0, 0.0, 1.0, 1.0];
+    // icosahedron1.scale = 0.2;
+    
+    let icosahedron2 = new Icosahedron(engine, 1.0, 2);
+    icosahedron2.color = [1.0, 1.0, 0.0, 1.0];
+
+    engine.add_renderable(axes);
+    // engine.add_renderable(icosahedron1);
+    engine.add_renderable(icosahedron2);
 
     engine.load_resources_and_start();
 }

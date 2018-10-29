@@ -62,10 +62,16 @@ export default class {
         this._vbos.initialize(gl);
     
         // gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
+        // let ext = gl.getExtension('EXT_blend_minmax');
+        // gl.blendEquation(ext.MIN_EXT);
+        // gl.blendEquation(ext.MAX_EXT);
+        // gl.blendColor(1.0, 1.0, 1.0, 0.5);
+        // gl.blendFunc(gl.ONE, gl.ONE);
         // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        // gl.blendFunc(gl.SRC_COLOR,gl.ONE_MINUS_SRC_COLOR);
-        // gl.enable(gl.BLEND);
-        gl.enable(gl.DEPTH_TEST);
+        gl.blendFunc(gl.SRC_COLOR, gl.ONE)
+        gl.enable(gl.BLEND);
+        // gl.enable(gl.DEPTH_TEST);
     }
 
     add_renderable(renderable) {

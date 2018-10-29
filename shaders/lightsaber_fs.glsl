@@ -4,8 +4,8 @@
     precision mediump float;
 #endif
 
-uniform float uDistance;
-uniform vec4 uPoints;
+uniform float u_distance;
+uniform vec4 u_end_points;
 // uniform vec4 uViewport; // vec4(0, 0, 640, 480);
 
 vec2 normalizeFragCoord() {
@@ -31,9 +31,9 @@ void main() {
     }
     gl_FragColor = vec4(redIntensity, 0.0, 0.0, 1.0);
     */
-    float DISTANCE = uDistance;
-    vec2 point1 = vec2(uPoints[0], uPoints[1]);
-    vec2 point2 = vec2(uPoints[2], uPoints[3]);
+    float DISTANCE = u_distance;
+    vec2 point1 = vec2(u_end_points[0], u_end_points[1]);
+    vec2 point2 = vec2(u_end_points[2], u_end_points[3]);
     
     float redIntensity = 0.0;
     float distance = 0.0;
@@ -58,6 +58,6 @@ void main() {
     else if (length(normalizedP - point2) < DISTANCE) {
         redIntensity = 1.0 - length(normalizedP - point2) / DISTANCE;
     }
-    if (redIntensity == 0.0) discard; 
+    else discard; 
     gl_FragColor = vec4(redIntensity, 0.0, 0.0, 1.0);
 }
