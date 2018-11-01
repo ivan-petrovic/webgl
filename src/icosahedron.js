@@ -124,7 +124,7 @@ export default class Icosahedron extends Renderable {
         let light = this.engine.light;
         
         // let pvm_matrix = mat4.create();
-        let normal_matrix = mat4.create();
+        let normal_matrix = mat3.create();
         let model_matrix = mat4.create(); // Creates a blank identity matrix
         let view_model_matrix = mat4.create(); // Creates a blank identity matrix
         
@@ -140,8 +140,9 @@ export default class Icosahedron extends Renderable {
 
         // mat4.identity(normal_matrix);
         // mat4.set(normal_matrix, view_model_matrix);
-        mat4.invert(normal_matrix, view_model_matrix);
-        mat4.transpose(normal_matrix, normal_matrix);
+        // mat4.invert(normal_matrix, view_model_matrix);
+        // mat4.transpose(normal_matrix, normal_matrix);
+        mat3.normalFromMat4(normal_matrix, view_model_matrix);
 
         this.shader.activate(gl);
         
@@ -176,7 +177,7 @@ export default class Icosahedron extends Renderable {
         // uniform mat4 u_N_transform;
         gl.uniformMatrix4fv(this.shader.uniforms.VM_transform, false, view_model_matrix);
         gl.uniformMatrix4fv(this.shader.uniforms.P_transform, false, camera.projection_matrix);
-        gl.uniformMatrix4fv(this.shader.uniforms.N_transform, false, normal_matrix);
+        gl.uniformMatrix3fv(this.shader.uniforms.N_transform, false, normal_matrix);
 
         gl.uniform3fv(this.shader.uniforms.light_direction, light.direction);
         gl.uniform4fv(this.shader.uniforms.light_ambient, light.ambient);
@@ -184,8 +185,12 @@ export default class Icosahedron extends Renderable {
         gl.uniform4fv(this.shader.uniforms.light_specular, light.specular);
         gl.uniform1f(this.shader.uniforms.shininess, light.shininess);
 
-        gl.uniform4fv(this.shader.uniforms.material_ambient, [0.1,0.5,0.8,1.0]);
-        gl.uniform4fv(this.shader.uniforms.material_diffuse, [0.1,0.5,0.8,1.0]);
+        // gl.uniform4fv(this.shader.uniforms.material_ambient, [0.1,0.5,0.8,1.0]);
+        // gl.uniform4fv(this.shader.uniforms.material_diffuse, [0.1,0.5,0.8,1.0]);
+        // gl.uniform4fv(this.shader.uniforms.material_specular, [1.0,1.0,1.0,1.0]);
+
+        gl.uniform4fv(this.shader.uniforms.material_ambient, this.color);
+        gl.uniform4fv(this.shader.uniforms.material_diffuse, this.color);
         gl.uniform4fv(this.shader.uniforms.material_specular, [1.0,1.0,1.0,1.0]);
 
         // for(let i = 0; i < this.vertices_count / 3; i += 3) {

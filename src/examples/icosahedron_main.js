@@ -29,17 +29,17 @@ export function main() {
 
     let axes = new Axes(engine);
 
-    // let icosahedron1 = new Icosahedron(engine, 1.0, 1);
-    // icosahedron1.add_behaviour(new OrbitBehaviour(icosahedron1));
-    // icosahedron1.position = [0.0, 0.0, 1.0];
-    // icosahedron1.color = [0.0, 0.0, 1.0, 1.0];
-    // icosahedron1.scale = 0.2;
+    let icosahedron1 = new Icosahedron(engine, 1.0, 3);
+    icosahedron1.add_behaviour(new OrbitBehaviour(icosahedron1));
+    icosahedron1.position = [0.0, 0.0, 1.0];
+    icosahedron1.color = [0.0, 1.0, 0.0, 1.0];
+    icosahedron1.scale = 0.2;
     
-    let icosahedron2 = new Icosahedron(engine, 1.0, 2);
+    let icosahedron2 = new Icosahedron(engine, 1.0, 3);
     icosahedron2.color = [1.0, 1.0, 0.0, 1.0];
 
     engine.add_renderable(axes);
-    // engine.add_renderable(icosahedron1);
+    engine.add_renderable(icosahedron1);
     engine.add_renderable(icosahedron2);
 
     engine.load_resources_and_start();

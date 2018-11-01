@@ -69,9 +69,9 @@ export default class {
         // gl.blendColor(1.0, 1.0, 1.0, 0.5);
         // gl.blendFunc(gl.ONE, gl.ONE);
         // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        gl.blendFunc(gl.SRC_COLOR, gl.ONE)
-        gl.enable(gl.BLEND);
-        // gl.enable(gl.DEPTH_TEST);
+        // gl.blendFunc(gl.SRC_COLOR, gl.ONE)
+        // gl.enable(gl.BLEND);
+        gl.enable(gl.DEPTH_TEST);
     }
 
     add_renderable(renderable) {

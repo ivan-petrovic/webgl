@@ -3,7 +3,8 @@ attribute vec3 a_normal;
 
 uniform mat4 u_VM_transform;
 uniform mat4 u_P_transform;
-uniform mat4 u_N_transform;
+// uniform mat4 u_N_transform;
+uniform mat3 u_N_transform;
 
 uniform float u_shininess;
 uniform vec3 u_light_direction;
@@ -19,7 +20,9 @@ varying vec4 v_final_color;
 
 void main(void) {
     vec4 vertex = u_VM_transform * vec4(a_position, 1.0);
-    vec3 N = vec3(u_N_transform * vec4(a_normal, 1.0));
+    // vec3 N = vec3(u_N_transform * vec4(a_normal, 1.0));
+    vec3 transformedNormal = u_N_transform * a_normal;
+    vec3 N = normalize(transformedNormal); 
     vec4 light = u_VM_transform * vec4(u_light_direction, 0.0);
     // vec3 L = normalize(u_light_direction);
     vec3 L = normalize(light.xyz);
