@@ -6,7 +6,6 @@ uniform mat4 u_P_transform;
 // uniform mat4 u_N_transform;
 uniform mat3 u_N_transform;
 
-uniform float u_shininess;
 uniform vec3 u_light_direction;
 uniform vec4 u_light_ambient;
 uniform vec4 u_light_diffuse;
@@ -15,10 +14,11 @@ uniform vec4 u_light_specular;
 uniform vec4 u_material_ambient;
 uniform vec4 u_material_diffuse;
 uniform vec4 u_material_specular;
+uniform float u_shininess;
 
 varying vec4 v_final_color;
 
-void main(void) {
+void main() {
     vec4 vertex = u_VM_transform * vec4(a_position, 1.0);
     // vec3 N = vec3(u_N_transform * vec4(a_normal, 1.0));
     vec3 transformedNormal = u_N_transform * a_normal;

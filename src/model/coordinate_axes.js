@@ -1,6 +1,6 @@
 "use strict";
 
-import Renderable from './engine/renderable';
+import Renderable from '../engine/renderable';
 
 export default class Axes extends Renderable {
     constructor(engine, length = 5.0) {

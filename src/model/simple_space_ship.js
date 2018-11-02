@@ -5,7 +5,8 @@ import Renderable from '../engine/renderable';
 export default class SimpleSpaceShip extends Renderable {
     constructor(engine) {
         // super(engine, 'basic_vs.glsl', 'basic_fs.glsl');
-        super(engine, 'goraud_phong_vs.glsl', 'goraud_phong_fs.glsl');
+        // super(engine, 'goraud_phong_vs.glsl', 'goraud_phong_fs.glsl');
+        super(engine, 'phong_phong_vs.glsl', 'phong_phong_fs.glsl');
 
         this._color = [0.0, 0.0, 1.0, 1.0];
         this._position = [0.0, 0.0, 0.0];
@@ -44,32 +45,40 @@ export default class SimpleSpaceShip extends Renderable {
     }
 
     _generate_vertices() {
-        // v1 -0.5, 0.0, 0.5
-        // v2  0.0, 0.0, 0.0
-        // v3  0.5, 0.0, 0.5
-        // v4  0.0, 0.0,-1.0
-        // v5  0.0, 0.5, 0.0
+        let v1 = vec3.fromValues(-0.5, 0.0, 0.5);
+        let v2 = vec3.fromValues(0.0, 0.0, 0.0);
+        let v3 = vec3.fromValues(0.5, 0.0, 0.5);
+        let v4 = vec3.fromValues(0.0, 0.0,-1.0);
+        let v5 = vec3.fromValues(0.0, 0.3, 0.2);
 
-        // t1 1 2 4
-        // t2 2 3 4
-        // t3 1 2 5
-        // t4 2 3 5
-        // t5 1 5 4
-        // t6 3 4 5
+        this.vertices.push(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v4[0], v4[1], v4[2]);   // t1 1 2 4
+        this.vertices.push(v2[0], v2[1], v2[2], v3[0], v3[1], v3[2], v4[0], v4[1], v4[2]);   // t2 2 3 4
+        this.vertices.push(v1[0], v1[1], v1[2], v2[0], v2[1], v2[2], v5[0], v5[1], v5[2]);   // t3 1 2 5
+        this.vertices.push(v2[0], v2[1], v2[2], v3[0], v3[1], v3[2], v5[0], v5[1], v5[2]);   // t4 2 3 5
+        this.vertices.push(v1[0], v1[1], v1[2], v5[0], v5[1], v5[2], v4[0], v4[1], v4[2]);   // t5 1 5 4
+        this.vertices.push(v3[0], v3[1], v3[2], v4[0], v4[1], v4[2], v5[0], v5[1], v5[2]);   // t6 3 4 5
 
-        this.vertices.push(-0.5, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0,-1.0);   // t1
-        this.vertices.push( 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.0, 0.0,-1.0);   // t2
-        this.vertices.push(-0.5, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0);   // t3
-        this.vertices.push( 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.0, 0.5, 0.0);   // t4
-        this.vertices.push(-0.5, 0.0, 0.5, 0.0, 0.5, 0.0, 0.0, 0.0,-1.0);   // t5
-        this.vertices.push( 0.5, 0.0, 0.5, 0.0, 0.0,-1.0, 0.0, 0.5, 0.0);   // t6
-            
-        this.normals.push( 0.0,-1.0, 0.0, 0.0,-1.0, 0.0, 0.0,-1.0, 0.0);   // normals for 3 vertices of t1
-        this.normals.push( 0.0,-1.0, 0.0, 0.0,-1.0, 0.0, 0.0,-1.0, 0.0);   // normals for 3 vertices of t2
-        this.normals.push( 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);   // normals for 3 vertices of t3
-        this.normals.push(-1.0, 0.0, 1.0,-1.0, 0.0, 1.0,-1.0, 0.0, 1.0);   // normals for 3 vertices of t3
-        this.normals.push(-1.0, 1.0,-1.0,-1.0, 1.0,-1.0,-1.0, 1.0,-1.0);   // normals for 3 vertices of t3
-        this.normals.push( 1.0, 1.0,-1.0, 1.0, 1.0,-1.0, 1.0, 1.0,-1.0);   // normals for 3 vertices of t3
+        this._calculate_normal(v1, v2, v4);   // t1
+        this._calculate_normal(v2, v3, v4);   // t2
+        this._calculate_normal(v1, v2, v5);   // t3
+        this._calculate_normal(v2, v3, v5);   // t4
+        this._calculate_normal(v1, v5, v4);   // t5
+        this._calculate_normal(v3, v4, v5);   // t6
+    }
+
+    _calculate_normal(v1, v2, v3) {
+        let normal = vec3.create();
+        let p1 = vec3.create();
+        let p2 = vec3.create();
+        
+        vec3.subtract(p1, v2, v1);
+        vec3.subtract(p2, v3, v1);
+        vec3.cross(normal, p1, p2);
+        vec3.normalize(normal, normal);
+
+        this.normals.push( normal[0], normal[1], normal[2]);
+        this.normals.push( normal[0], normal[1], normal[2]);
+        this.normals.push( normal[0], normal[1], normal[2]);
     }
 
     draw(gl) {

@@ -1,6 +1,6 @@
 "use strict";
 
-import Renderable from './engine/renderable';
+import Renderable from '../engine/renderable';
 
 const X = .525731112119133606;
 const Z = .850650808352039932;
@@ -8,7 +8,8 @@ const Z = .850650808352039932;
 export default class Icosahedron extends Renderable {
     constructor(engine, radius, depth) {
         // super(engine, 'basic_vs.glsl', 'basic_fs.glsl');
-        super(engine, 'goraud_phong_vs.glsl', 'goraud_phong_fs.glsl');
+        // super(engine, 'goraud_phong_vs.glsl', 'goraud_phong_fs.glsl');
+        super(engine, 'phong_phong_vs.glsl', 'phong_phong_fs.glsl');
 
         this.radius = radius;
         this.depth = depth;
