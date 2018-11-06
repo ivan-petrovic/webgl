@@ -8,8 +8,8 @@ export default class SimpleSpaceShip extends Renderable {
         // super(engine, 'goraud_phong_vs.glsl', 'goraud_phong_fs.glsl');
         super(engine, 'phong_phong_vs.glsl', 'phong_phong_fs.glsl');
 
-        this._color = [0.0, 0.0, 1.0, 1.0];
-        this._position = [0.0, 0.0, 0.0];
+        this._color = [1.0, 0.0, 1.0, 1.0];
+        this._position = vec3.create(); // [0.0, 0.0, 0.0];
         this._scale = 1.0;
 
         this.vertex_buffer_id = null;
@@ -91,9 +91,9 @@ export default class SimpleSpaceShip extends Renderable {
         let view_model_matrix = mat4.create(); // Creates a blank identity matrix
         
         // Step A: compute translation, for now z is always at 0.0
-        mat4.translate(model_matrix, model_matrix, vec3.fromValues(this._position[0], this._position[1], this._position[2]));
+        mat4.translate(model_matrix, model_matrix, this.position);
         // Step B: concatenate with rotation.
-        // mat4.rotateZ(matrix, matrix, this.getRotationInRad());
+        mat4.rotateY(model_matrix, model_matrix, (this.behaviours[0].angle + 180) * Math.PI / 180);
         // Step C: concatenate with scaling
         mat4.scale(model_matrix, model_matrix, vec3.fromValues(this.scale, this.scale, this.scale));
 

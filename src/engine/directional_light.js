@@ -4,9 +4,9 @@ export default class {
     constructor() {
         this._shininess = 5;        // float
         this._light_direction = [0.0, 0.0, -1.0];  // vec3
-        this._light_ambient = [0.01,0.01,0.01,1.0];    // vec4
-        this._light_diffuse = [0.5,0.5,0.5,1.0];    // vec4
-        this._light_specular = [0.5,0.5,0.5,1.0];   // vec4
+        this._light_ambient = [0.1,0.1,0.1,1.0];    // vec4
+        this._light_diffuse = [0.8,0.8,0.8,1.0];    // vec4
+        this._light_specular = [1.0,1.0,1.0,1.0];   // vec4
     }
 
     get shininess() { return this._shininess; }
