@@ -30,6 +30,14 @@ export default class SimpleSpaceShip extends Renderable {
     get angle() { return this._angle; }
     set angle(angle) { this._angle = angle; }
 
+    get_direction() {
+        return vec3.fromValues(
+            Math.sin((this.angle + 180) * Math.PI / 180),
+            0.0,
+            Math.cos((this.angle + 180) * Math.PI / 180),
+        );
+    }
+
     set scale(scale) { this._scale = scale; }
     get scale() { return this._scale; }
 
