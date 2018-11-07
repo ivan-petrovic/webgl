@@ -4,7 +4,7 @@
  * which is vec3 type.
  */
 export default class  {
-    constructor(object, angle, key_mappings = {}) {
+    constructor(object, key_mappings = {}) {
         this.object = object;
 
         this._moving_right = false;
@@ -14,7 +14,6 @@ export default class  {
 
         this._speed = 0.1;
         this._rotation_speed = 1.0;
-        this._angle = angle;
 
         this.key_right = 39;        // right arrow
         this.key_left = 37;         // left arrow
@@ -32,26 +31,15 @@ export default class  {
     get rotation_speed() { return this._rotation_speed; }
     set rotation_speed(rotation_speed) { this._rotation_speed = rotation_speed; }
 
-    get angle() { return this._angle; }
-    set angle(angle) { this._angle = angle; }
+    is_rotating() {
+        return this._moving_left || this._moving_right;
+    }
 
     is_moving() {
-        return this._moving_left || this._moving_right || this._moving_up || this._moving_down;
+        return this._moving_up || this._moving_down;
     }
 
     update(input) {
-        if (input.isKeyPressed(this.key_right)) {
-            if(!this.is_moving()) {
-                this._moving_right = true;
-            }
-        }
-
-        if (input.isKeyPressed(this.key_left)) {
-            if(!this.is_moving()) {
-                this._moving_left = true;
-            }
-        }
-
         if (input.isKeyPressed(this.key_up)) {
             if(!this.is_moving()) {
                 this._moving_up = true;
@@ -64,17 +52,29 @@ export default class  {
             }
         }
 
+        if (input.isKeyPressed(this.key_right)) {
+            if(this.is_moving() && !this.is_rotating()) {
+                this._moving_right = true;
+            }
+        }
+
+        if (input.isKeyPressed(this.key_left)) {
+            if(this.is_moving() && !this.is_rotating()) {
+                this._moving_left = true;
+            }
+        }
+
         if(this._moving_right) {
-            this.angle -= this.rotation_speed;
+            this.object.angle -= this.rotation_speed;
             this._moving_right = false;
         }
 
         if(this._moving_left) {
-            this.angle += this.rotation_speed;
+            this.object.angle += this.rotation_speed;
             this._moving_left = false;
         }
 
-        this.angle %= 360;
+        this.object.angle %= 360;
 
         if(this._moving_up) {
             vec3.scaleAndAdd(this.object.position, this.object.position, this.get_direction(), this.speed);
@@ -89,17 +89,17 @@ export default class  {
 
     get_direction() {
         return vec3.fromValues(
-            Math.sin(this.angle * Math.PI / 180),
+            Math.sin(this.object.angle * Math.PI / 180),
             0.0,
-            Math.cos(this.angle * Math.PI / 180),
+            Math.cos(this.object.angle * Math.PI / 180),
         );
     }
 
     get_reverse_direction() {
         let direction = vec3.fromValues(
-            Math.sin(this.angle * Math.PI / 180),
+            Math.sin(this.object.angle * Math.PI / 180),
             0.0,
-            Math.cos(this.angle * Math.PI / 180),
+            Math.cos(this.object.angle * Math.PI / 180),
         );
         vec3.negate(direction, direction);
         return direction;

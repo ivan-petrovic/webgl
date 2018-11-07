@@ -4,12 +4,13 @@ import Renderable from '../engine/renderable';
 
 export default class SimpleSpaceShip extends Renderable {
     constructor(engine) {
-        // super(engine, 'basic_vs.glsl', 'basic_fs.glsl');
         // super(engine, 'goraud_phong_vs.glsl', 'goraud_phong_fs.glsl');
         super(engine, 'phong_phong_vs.glsl', 'phong_phong_fs.glsl');
 
         this._color = [1.0, 0.0, 1.0, 1.0];
         this._position = vec3.create(); // [0.0, 0.0, 0.0];
+        this._angle = 180;
+    
         this._scale = 1.0;
 
         this.vertex_buffer_id = null;
@@ -25,6 +26,9 @@ export default class SimpleSpaceShip extends Renderable {
 
     set position(position) { this._position = position; }
     get position() { return this._position; }
+
+    get angle() { return this._angle; }
+    set angle(angle) { this._angle = angle; }
 
     set scale(scale) { this._scale = scale; }
     get scale() { return this._scale; }
@@ -93,7 +97,7 @@ export default class SimpleSpaceShip extends Renderable {
         // Step A: compute translation, for now z is always at 0.0
         mat4.translate(model_matrix, model_matrix, this.position);
         // Step B: concatenate with rotation.
-        mat4.rotateY(model_matrix, model_matrix, (this.behaviours[0].angle + 180) * Math.PI / 180);
+        mat4.rotateY(model_matrix, model_matrix, (this.angle + 180) * Math.PI / 180);
         // Step C: concatenate with scaling
         mat4.scale(model_matrix, model_matrix, vec3.fromValues(this.scale, this.scale, this.scale));
 

@@ -1,7 +1,7 @@
 "use strict";
 
 import MnEngine from './engine/engine';
-import Camera from './engine/perspective_camera';
+import Camera from './engine/camera/perspective';
 import Light from './engine/directional_light';
 import OrbitBehaviour from './behaviour/orbit';
 import MovingInPlaneBehaviour from './behaviour/moving_in_plane';
@@ -29,12 +29,12 @@ export function main() {
     engine.camera = camera;
 
     let light = new Light();
-    light.direction = [1.0, 0.0, 1.0];
+    light.direction = [0.0, -1.0, 0.0];
     engine.add_light(light);
 
     let floor = new Floor(engine);
     let ship = new SpaceShip(engine);
-    ship.add_behaviour(new MovingInPlaneBehaviour(ship, 180));
+    ship.add_behaviour(new MovingInPlaneBehaviour(ship));
     let icosahedron = new Icosahedron(engine, 1.0, 2.0);
     icosahedron.position = [2.0, 0.0, -2.0];
 
