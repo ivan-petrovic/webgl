@@ -2,7 +2,7 @@
 
 import MnEngine from './engine/engine';
 import Camera from './engine/camera/perspective';
-import Light from './engine/directional_light';
+import Light from './engine/light/directional';
 // import OrbitBehaviour from './behaviour/orbit';
 import TrackBehaviour from './behaviour/camera_track_to';
 import MovingInPlaneBehaviour from './behaviour/moving_in_plane';
@@ -19,7 +19,7 @@ export function main() {
         1.0,                             // fovy
         [0, 0, 640, 480]                 // viewportArray
     );
-     // camera.add_behaviour(new OrbitBehaviour(camera, {
+    // camera.add_behaviour(new OrbitBehaviour(camera, {
     //     'right': engine.input.Keys.D,
     //     'left': engine.input.Keys.A,
     //     'up': engine.input.Keys.W,

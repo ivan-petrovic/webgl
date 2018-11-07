@@ -152,12 +152,12 @@ export default class SimpleSpaceShip extends Renderable {
         gl.uniform4fv(this.shader.uniforms.light_ambient, light.ambient);
         gl.uniform4fv(this.shader.uniforms.light_diffuse, light.diffuse);
         gl.uniform4fv(this.shader.uniforms.light_specular, light.specular);
-        gl.uniform1f(this.shader.uniforms.shininess, light.shininess);
 
         gl.uniform4fv(this.shader.uniforms.material_ambient, this.color);
         gl.uniform4fv(this.shader.uniforms.material_diffuse, this.color);
-        gl.uniform4fv(this.shader.uniforms.material_specular, [1.0,1.0,1.0,1.0]);
-
+        gl.uniform4fv(this.shader.uniforms.material_specular, [0.0,0.0,0.0,1.0]);
+        gl.uniform1f(this.shader.uniforms.shininess, 10.0);
+        
         gl.drawArrays(gl.TRIANGLES, 0, this.vertices_count);
     }
 }

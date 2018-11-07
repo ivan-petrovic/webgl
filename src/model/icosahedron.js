@@ -184,7 +184,6 @@ export default class Icosahedron extends Renderable {
         gl.uniform4fv(this.shader.uniforms.light_ambient, light.ambient);
         gl.uniform4fv(this.shader.uniforms.light_diffuse, light.diffuse);
         gl.uniform4fv(this.shader.uniforms.light_specular, light.specular);
-        gl.uniform1f(this.shader.uniforms.shininess, light.shininess);
 
         // gl.uniform4fv(this.shader.uniforms.material_ambient, [0.1,0.5,0.8,1.0]);
         // gl.uniform4fv(this.shader.uniforms.material_diffuse, [0.1,0.5,0.8,1.0]);
@@ -193,7 +192,8 @@ export default class Icosahedron extends Renderable {
         gl.uniform4fv(this.shader.uniforms.material_ambient, this.color);
         gl.uniform4fv(this.shader.uniforms.material_diffuse, this.color);
         gl.uniform4fv(this.shader.uniforms.material_specular, [1.0,1.0,1.0,1.0]);
-
+        gl.uniform1f(this.shader.uniforms.shininess, 3.0);
+        
         // for(let i = 0; i < this.vertices_count / 3; i += 3) {
         //     gl.drawArrays(gl.LINE_LOOP, i, 3);
         // }
