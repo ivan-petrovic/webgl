@@ -1,0 +1,12 @@
+//- index.pug
+doctype html
+html(lang='en')
+  include includes/head.pug
+  body#home(onload='Mn.main()')
+    h1 WebGL examples
+    canvas#glscreen(width='640' height='480')
+    // external library
+    script(src='js/lib/gl-matrix.js')
+    script(src='js/bundle.js')
+    p Welcome to my super lame site.
+    include includes/foot.pug

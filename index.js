@@ -3,8 +3,20 @@ const path = require("path");
 
 const app = express();
 
+if (app.get('env') === 'development') {
+    app.locals.pretty = true;
+}
+
+app.set('views', './views');
+app.set('view engine', 'pug');
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'shaders')));
+
+app.get('/', function (req, res) {
+    res.render('index');
+    // res.render('index', { title: 'Hey', message: 'Hello there!' });
+});
 
 app.get('/something', (req, res) => res.send('Hello World!'));
 
