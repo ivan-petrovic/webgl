@@ -25,6 +25,7 @@ export default class {
      * This should only be called once the texture is loaded.
      */
     _processLoadedImage(textureName, image) {
+        // console.log('in _processLoadedImage');
         let gl = this.glContext;
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y axis ////////
@@ -75,6 +76,7 @@ export default class {
     // Loads an texture so that it can be drawn.
     // If already in the map, will do nothing.
     loadTexture(textureName) {
+        // console.log('in load texture');
         if (!(this.resourceMap.isAssetLoaded(textureName))) {
             // Create new Texture object.
             let img = new Image();
@@ -104,7 +106,9 @@ export default class {
 
     activateTexture(textureName) {
         let gl = this.glContext;
+        // console.log('activate texture');
         let texInfo = this.resourceMap.retrieveAsset(textureName);
+        // console.log('texInfo.name ' + texInfo.mName);
 
         // Binds our texture reference to the current webGL texture functionality
         gl.bindTexture(gl.TEXTURE_2D, texInfo.mGLTexID);

@@ -71,6 +71,7 @@ export default class {
         // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         // gl.blendFunc(gl.SRC_COLOR, gl.ONE)
         // gl.enable(gl.BLEND);
+        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // for transparent texture
         gl.enable(gl.DEPTH_TEST);
     }
 

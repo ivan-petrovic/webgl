@@ -1,15 +1,10 @@
 "use strict";
 
 import Renderable from './engine/renderable';
-import Shader from './engine/shader';
-
-// Next two properties are shared by all instances of class (static properties)
-let _shader = null;         // the shader for shading this object
-let _vertexBuffer = null;   // the vertex buffer for this object
 
 export default class TexturedSquare extends Renderable {
     constructor(engine, centerX, centerY, width, height, textureName) {
-        super(engine);
+        super(engine, 'texture_vs.glsl', 'texture_fs.glsl');
 
         // Center and width of square
         this.centerX = centerX;
@@ -17,6 +12,9 @@ export default class TexturedSquare extends Renderable {
         this.width = width;
         this.height = height;
         this.color = [1.0, 0.0, 0.0, 0.0]; // default red color
+
+        this.vertex_buffer_id = null;
+        this.texture_buffer_id = null;
 
         this.textureName = textureName;
         // these two instance variables are to cache texture information
@@ -40,44 +38,34 @@ export default class TexturedSquare extends Renderable {
         this.goalPosition = null;
     }
 
-    static get vertexShaderName() { return 'shaders/textureVS.glsl'; }
-    static get fragmentShaderName() { return 'shaders/textureFS.glsl'; }
-    static get shader() { return _shader; }
-    static set shader(value) { _shader = value; }
-    static get vertexBuffer() { return _vertexBuffer; }
-    static set vertexBuffer(value) { _vertexBuffer = value; }
-    
     setColor(color) { this.color = color; }
     getColor() { return this.color; }
     
     setGrid(grid) { this.grid = grid; this.getPositionOnGrid(); }
+    
     setPositionOnGrid(row, column) {
         this.row = row;
         this.column = column;
     }
+
     getPositionOnGrid() {
         let position = this.grid.getCellCenter(this.row, this.column);
         this.centerX = position[0];
         this.centerY = position[1];
     }
 
-    loadResources() {
-        // Load necessery shader files asynchroniously
-        let textFileLoader = this.engine.text_file_loader;
-        let textureLoader = this.engine.getTextureLoader();
-
-        textFileLoader.loadTextFile(TexturedSquare.vertexShaderName, textFileLoader.eTextFileType.eTextFile);
-        textFileLoader.loadTextFile(TexturedSquare.fragmentShaderName, textFileLoader.eTextFileType.eTextFile);
-        textureLoader.loadTexture(this.textureName);
+    load_resources() {
+        super.load_resources();
+        this.engine.texture_file_loader.loadTexture(this.textureName);        
     }
 
     initialize() {
-        if(TexturedSquare.shader === null) {
-            TexturedSquare.shader = new TextureShader(TexturedSquare.vertexShaderName, TexturedSquare.fragmentShaderName);
-            TexturedSquare.shader.initialize(this.engine.resources, this.engine.webgl_context);
-        }
+        super.initialize();
 
-        if(TexturedSquare.vertexBuffer === null) {
+        this.vertex_buffer_id = this.engine.retrieve_vbo('UNIT_SQUARE');
+        this.texture_buffer_id = this.engine.retrieve_vbo('UNIT_SQUARE_TEXTURE');
+
+        if (this.vertex_buffer_id === null) {
             let verticesOfSquare = [
                 0.5, 0.5, 0.0,
                 -0.5, 0.5, 0.0,
@@ -90,18 +78,21 @@ export default class TexturedSquare extends Renderable {
                 1.0, 0.0,
                 0.0, 0.0
             ];
-            TexturedSquare.vertexBuffer = new VertexBuffer(verticesOfSquare, textureCoordinates);
-            TexturedSquare.vertexBuffer.initialize(this.engine.webgl_context);
+
+            let gl = this.engine.webgl_context;
+            this.vertex_buffer_id = this.engine.vbos_library.add_vbo('UNIT_SQUARE', new Float32Array(verticesOfSquare), gl.ARRAY_BUFFER, gl);
+            this.texture_buffer_id = this.engine.vbos_library.add_vbo('UNIT_SQUARE_TEXTURE', new Float32Array(textureCoordinates), gl.ARRAY_BUFFER, gl);
         }
 
         this.initTexture();     // texture for this object, cannot be a "null"
     }
 
-    getTexture() { return this.texture; }
     initTexture() {
         // these two instance variables are to cache texture information
         // for supporting per-pixel accurate collision
-        this.mTextureInfo = this.engine.getTextureLoader().getTextureInfo(this.textureName);
+        // console.log('init texture');
+        this.mTextureInfo = this.engine.texture_file_loader.getTextureInfo(this.textureName);
+        // console.log('mTextureInfo.name ' + this.mTextureInfo.mName);
         this.mColorArray = null;
         // defined for subclass to override
         this.mTexWidth = this.mTextureInfo.mWidth;
@@ -199,83 +190,36 @@ export default class TexturedSquare extends Renderable {
         mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(this.width, this.height, 1.0));
 
         mat4.multiply(pvmMatrix, camera.getPVMatrix(), modelMatrix);
-        TexturedSquare.shader.activate(gl);
-        
-        this.engine.getTextureLoader().activateTexture(this.textureName);
+
+        this.shader.activate(gl);
+
+        this.engine.texture_file_loader.activateTexture(this.textureName);
         
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, TexturedSquare.vertexBuffer.getVertexBufferId());
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer_id);
 
         // Describe the characteristic of the vertex position attribute
-        gl.vertexAttribPointer(TexturedSquare.shader.positionLocation,
+        gl.vertexAttribPointer(this.shader.attributes.position,
             3,              // each element is a 3-float (x,y,z)
             gl.FLOAT,       // data type is FLOAT
             false,          // if the content is normalized vectors
             0,              // number of bytes to skip in between elements
             0);             // offsets to the first element
+        gl.enableVertexAttribArray(this.shader.attributes.position);
 
-        gl.enableVertexAttribArray(TexturedSquare.shader.positionLocation);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.texture_buffer_id);
+        gl.enableVertexAttribArray(this.shader.attributes.texture_coordinate);
+        gl.vertexAttribPointer(this.shader.attributes.texture_coordinate, 2, gl.FLOAT, false, 0, 0);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, TexturedSquare.vertexBuffer.getTextureCoordinatesBufferId());
-        gl.enableVertexAttribArray(TexturedSquare.shader.textureCoordLocation);
-        gl.vertexAttribPointer(TexturedSquare.shader.textureCoordLocation, 2, gl.FLOAT, false, 0, 0);
+        gl.uniformMatrix4fv(this.shader.uniforms.PVM_transform, false, pvmMatrix);
+        gl.uniform4fv(this.shader.uniforms.pixel_color, this.color);
+        gl.uniform1i(this.shader.uniforms.sampler, 0);
 
-        gl.uniformMatrix4fv(TexturedSquare.shader.PVMTransformLocation, false, pvmMatrix);
-        gl.uniform4fv(TexturedSquare.shader.colorLocation, this.color);
-        gl.uniform1i(TexturedSquare.shader.samplerLocation, 0);
-        // TexturedSquare.shader.activate();
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // for transparent texture
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        gl.disable(gl.BLEND);
     }
-}
-
-class TextureShader extends Shader {
-    constructor(vertexShaderId, fragmentShaderId) {
-        super(vertexShaderId, fragmentShaderId);
-
-        // Specific locations for this shader
-        this.positionLocation = null;
-        this.PVMTransformLocation = null;
-        this.colorLocation = null;
-    }
-
-    getLocations(gl) {
-        this.positionLocation = gl.getAttribLocation(this.program, "aVertexPosition");
-        this.textureCoordLocation = gl.getAttribLocation(this.program, "aTextureCoordinate");
-        this.PVMTransformLocation = gl.getUniformLocation(this.program, "uPVMTransform");
-        this.colorLocation = gl.getUniformLocation(this.program, "uPixelColor");
-        this.samplerLocation = gl.getUniformLocation(this.program, "uSampler");
-    }
-}
-
-class VertexBuffer {
-    constructor(aVertices, aTextureCoordinates) {
-        this.vertices = aVertices;   // vertices of the object
-        this.textureCoordinates = aTextureCoordinates;   // vertices of the object
-        this.vertexBufferId = null;  // reference to the vertex positions for the square in the gl context
-        this.textureBufferId = null;  // reference to the vertex positions for the square in the gl context
-    }
-
-    // gl - webgl context
-    initialize(gl) {
-        // Step A: Create a buffer on the WebGL context for our vertex positions
-        this.vertexBufferId = gl.createBuffer();
-
-        // Step B: Activate vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBufferId);
-
-        // Step C: Loads vertices into the vertex buffer
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
-
-        this.textureBufferId = gl.createBuffer();
-
-        // Activate vertexBuffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBufferId);
-
-        // Loads verticesOfSquare into the vertexBuffer
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoordinates), gl.STATIC_DRAW);
-    }
-
-    getVertexBufferId() { return this.vertexBufferId; }
-    getTextureCoordinatesBufferId() { return this.textureBufferId; }
 }

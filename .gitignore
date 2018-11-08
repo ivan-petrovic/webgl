@@ -1,4 +1,4 @@
 /dist
-/public/js/bundle.js
+/public/js/*.js
 /node_modules
 .DS_Store
