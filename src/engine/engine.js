@@ -99,7 +99,7 @@ export default class {
     }
 
     render(now) {
-        window.requestAnimationFrame((now) => this.render(now));
+        // window.requestAnimationFrame((now) => this.render(now));
     
         let dt = now - (this.time || now);
         this.time = now;

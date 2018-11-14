@@ -1,7 +1,7 @@
 "use strict";
 
 import MnEngine from './engine/engine';
-import Camera from './engine/camera';
+import Camera from './engine/camera/orthographic';
 import TexturedSquare from './textured_square_renderable';
 import Grid from './grid_renderable';
 
@@ -13,7 +13,7 @@ export function main() {
         80.0,                            // width
         [0, 0, 640, 480]                 // viewportArray
     );
-    engine.setCamera(camera);
+    engine.camera = camera;
 
     let grid = new Grid(engine, -20.0, -20.0, 40.0, 40.0, 5, 5);
     let square = new TexturedSquare(engine, 0.0, 0.0, 8.0, 8.0, 'images/bubble-guppies.png');
