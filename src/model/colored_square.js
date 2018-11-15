@@ -9,7 +9,6 @@ export default class ColoredSquare extends Renderable {
         this.vertex_buffer_id = null;
 
         this._position = position;
-        this.z = 0;
         this._width = width;
         this._height = height;
         this._angle = 0;
@@ -55,7 +54,7 @@ export default class ColoredSquare extends Renderable {
         let modelMatrix = mat4.create(); // Creates a blank identity matrix
 
         // Step A: compute translation, for now z is always at 0.0
-        mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(this.position[0], this.position[1], this.z));
+        mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(this.position[0], this.position[1], 0.0));
         // Step B: concatenate with rotation.
         mat4.rotateZ(modelMatrix, modelMatrix, this.angle * Math.PI / 180);
         // Step C: concatenate with scaling

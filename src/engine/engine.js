@@ -6,6 +6,7 @@ import TextFileLoader from './resources/text_file_loader';
 import ShaderLibrary from './resources/shader_library';
 import VBOLibrary from './resources/vbo_library';
 import Input from './input';
+import DefaultScene from './scene';
 
 export default class {
     constructor() {
@@ -15,10 +16,11 @@ export default class {
         this.height = this.gl.drawingBufferHeight;
 
         this.time = null;
+        this.animation_loop = true;
 
         this._camera = null;
-        this._renderables = [];
         this._light = null;
+        this._scene = new DefaultScene();
 
         this._resources = new ResourceMap();  // should be singleton (for now that is not implemented)
         this._shaders = new ShaderLibrary();
@@ -45,6 +47,9 @@ export default class {
     get camera() { return this._camera; }
     set camera(camera) { this._camera = camera; }
 
+    get scene() { return this._scene; }
+    set scene(scene) { this._scene = scene; }
+
     get light() { return this._light; }
 
     retrieve_shader(vertex_shader_file, fragment_shader_file) {
@@ -56,27 +61,10 @@ export default class {
     }
 
     initialize() {
-        let gl = this.gl;
-
         this._input.initialize();
-        this._vbos.initialize(gl);
-    
-        // gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-        // let ext = gl.getExtension('EXT_blend_minmax');
-        // gl.blendEquation(ext.MIN_EXT);
-        // gl.blendEquation(ext.MAX_EXT);
-        // gl.blendColor(1.0, 1.0, 1.0, 0.5);
-        // gl.blendFunc(gl.ONE, gl.ONE);
-        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        // gl.blendFunc(gl.SRC_COLOR, gl.ONE)
-        // gl.enable(gl.BLEND);
-        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // for transparent texture
-        gl.enable(gl.DEPTH_TEST);
-    }
-
-    add_renderable(renderable) {
-        this._renderables.push(renderable);
+        this._vbos.initialize(this.gl);
+        this.scene.initialize();
+        this.scene.before_draw(this.gl);
     }
 
     add_light(light_source) {
@@ -84,22 +72,17 @@ export default class {
     }
 
     load_resources_and_start() {
-        for (let renderable of this._renderables) {
-            renderable.load_resources();
-        }
+        this.scene.load_resources();
         this._resources.setLoadCompleteCallback( () => this.start() );
     }
 
     start() {
         this.initialize();
-        for (let renderable of this._renderables) {
-            renderable.initialize();
-        }
         window.requestAnimationFrame((now) => this.render(now));
     }
 
     render(now) {
-        // window.requestAnimationFrame((now) => this.render(now));
+        if (this.animation_loop) window.requestAnimationFrame((now) => this.render(now));
     
         let dt = now - (this.time || now);
         this.time = now;
@@ -109,21 +92,12 @@ export default class {
         if(this._camera !== null) {
             this._camera.update(this._input);
         }
-        for (let renderable of this._renderables) {
-            renderable.update(this._input);
-        }
+        this.scene.update(this._input);
 
         // Clear screen and draw scene
-        let gl = this.gl;
-
         if(this._camera !== null) {
-            this._camera.setupProjectionViewMatrix(gl);
-        } else {
-            gl.clearColor(0.0, 0.0, 0.0, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            this._camera.setupProjectionViewMatrix(this.gl);
         }
-        for (let renderable of this._renderables) {
-            renderable.draw(gl);
-        }
+        this.scene.draw(this.gl);
     }
 }
