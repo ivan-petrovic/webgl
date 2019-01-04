@@ -1,6 +1,7 @@
 "use strict";
 
 import Buffer from '../buffer';
+import VBO from '../vbo';
 
 export default class {
     constructor() {
@@ -27,6 +28,21 @@ export default class {
      * 
      * @returns {number} id of vbo in webgl context
      */
+    get_vbo(vbo_name) {
+        let vbo = null;
+
+        if (vbo_name in this.vbos_map) {
+            vbo = this.vbos_map[vbo_name];
+        }
+        
+        return vbo;
+    }
+
+    /**
+     * @param {string} vbo_name Name of the VBO
+     * 
+     * @returns {number} id of vbo in webgl context
+     */
     add_vbo(vbo_name, data, type, gl) {
 
         if (vbo_name in this.vbos_map) {
@@ -38,6 +54,24 @@ export default class {
         this.vbos_map[vbo_name] = vertexBuffer;
 
         return vertexBuffer.id;
+    }
+
+    /**
+     * @param {string} vbo_name Name of the VBO
+     * 
+     * @returns {number} id of vbo in webgl context
+     */
+    create_vbo(vbo_name, size, type, gl) {
+
+        if (vbo_name in this.vbos_map) {
+            return this.vbos_map[vbo_name];
+        }
+
+        let vertexBuffer = new VBO(size, type);
+        vertexBuffer.initialize(gl);
+        this.vbos_map[vbo_name] = vertexBuffer;
+
+        return vertexBuffer;
     }
 
     initialize(gl) {
