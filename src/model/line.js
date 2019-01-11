@@ -5,7 +5,7 @@ import Renderable from '../engine/renderable';
 export default class Line extends Renderable {
     constructor(engine, start_point, end_point) {
         super(engine, 'basic_vs.glsl', 'basic_fs.glsl');
-        this.vertex_buffer = null;
+        this.vertex_buffer_id = null;
         this.offset = 0;    // offset in buffer
 
         this.color = [1.0, 0.0, 0.0, 1.0];
@@ -37,6 +37,14 @@ export default class Line extends Renderable {
         this.anf = this.a / this.length_of_a;
         this.bnf = this.b / this.length_of_a;
         this.cnf = this.c / this.length_of_a;
+    }
+
+    get length() {
+        return vec2.length(this.v);
+    }
+
+    at(t) {
+        return vec2.scaleAndAdd(vec2.create(), this.p, this.v, t)
     }
 
     distance(r) {
@@ -82,44 +90,30 @@ export default class Line extends Renderable {
     initialize() {
         super.initialize();
 
-        let gl = this.engine.webgl_context;
-        this.vertex_buffer = this.engine.vbos_library.get_vbo('SET_OF_LINES');
-
-        if (this.vertex_buffer === null) {
-            this.vertex_buffer = this.engine.vbos_library.create_vbo('SET_OF_LINES', 1024, gl.ARRAY_BUFFER, gl);
-        }
-
         let points = new Float32Array([
             this.p[0],this.p[1],0.0,
             this.q[0],this.q[1],0.0
         ]);
-        // console.log(this.start_position);
-        // console.log(this.end_position);
-        // console.log(points);
-        this.offset = this.vertex_buffer.load_data(points, gl);
-        // this.vertex_buffer.load_data(new Float32Array(this.start_position), gl);
-        // this.vertex_buffer.load_data(new Float32Array(this.end_position), gl);
+
+        this.vertex_buffer_id = this.engine.vbos_library.get_vbo_id('VBO_POSITION');
+        this.offset = this.engine.vbos_library.load_data_in_vbo('VBO_POSITION', points);
 
         if(this.show_normal) {
             let normal_points = new Float32Array([
                 this.q[0],this.q[1],0.0,
                 this.q[0] + this.n[0],this.q[1] + this.n[1],0.0
             ]);
-            this.vertex_buffer.load_data(normal_points, gl);
+            this.engine.vbos_library.load_data_in_vbo('VBO_POSITION', normal_points);
         }
     }
 
     draw(gl) {
-        let camera = this.engine.camera;
-        let pvmMatrix = mat4.create();
-        // let modelMatrix = mat4.create(); // Creates a blank identity matrix
+        let pvmMatrix = this.engine.camera.getPVMatrix();
 
-        mat4.multiply(pvmMatrix, camera.getPVMatrix(), pvmMatrix);
-        
         this.shader.activate(gl);
 
         // Activates the vertex buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer.id);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer_id);
 
         // Describe the characteristic of the vertex position attribute
         gl.vertexAttribPointer(this.shader.attributes.position,

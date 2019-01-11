@@ -24,7 +24,7 @@ export default class {
 
         this._resources = new ResourceMap();  // should be singleton (for now that is not implemented)
         this._shaders = new ShaderLibrary();
-        this._vbos = new VBOLibrary();
+        this._vbos = new VBOLibrary(this.gl);
 
         this._text_file_loader = new TextFileLoader(this._resources);
         this._texture_loader = new TextureLoader(this.gl, this._resources);
@@ -62,7 +62,7 @@ export default class {
 
     initialize() {
         this._input.initialize();
-        this._vbos.initialize(this.gl);
+        this._vbos.initialize();
         this.scene.initialize();
         this.scene.before_draw(this.gl);
     }
