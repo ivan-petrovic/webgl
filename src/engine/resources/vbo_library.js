@@ -105,6 +105,16 @@ export default class {
         return buffer.load_data(data, this.gl); // returns offset in buffer where data is stored
     }
 
+    load_data_in_vbo_at_offset(vbo_name, data, offset) {
+        let buffer = this.get_vbo(vbo_name);
+
+        if(buffer === null) {
+            console.log("VBO with name " + vbo_name + " does not exists.");
+            return;
+        }
+
+        buffer.load_data_at_offset(data, offset, this.gl);
+    }
 
     initialize() {
         let verticesOfSquare = [
@@ -117,7 +127,7 @@ export default class {
         vertexBuffer.initialize(this.gl);
         this.vbos_map['WHOLE_CANVAS'] = vertexBuffer;
 
-        let size_in_bytes = 10240;
+        let size_in_bytes = 20580;
         this.create_vbo('VBO_POSITION', size_in_bytes, this.gl.ARRAY_BUFFER);
     }
 }

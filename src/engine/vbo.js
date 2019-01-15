@@ -37,5 +37,27 @@ export default class {
         return offset;
     }
 
+    load_data_at_offset(data, offset, gl) {
+        if((offset + data.length) > this.size) {
+            console.log("No more space in buffer");
+            return;
+        }
+
+        if(offset > this.current_position) {
+            console.log("Offset behind current position in buffer");
+            return;
+        }
+
+        // Step B: Activate vertex buffer
+        gl.bindBuffer(this.type, this.buffer_id);
+
+        // Step C: Loads data into the buffer
+        gl.bufferSubData(this.type, offset, data); 
+        // console.log("Added: " + data.length + " data at position " + this.current_position + " of " + this.size);
+        // this.current_position += data.length * 4;   // size of float32 is 4 bytes
+        // console.log("Current position: " + this.current_position);
+        // return offset;
+    }
+
     get id() { return this.buffer_id; }
 }

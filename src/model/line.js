@@ -107,6 +107,73 @@ export default class Line extends Renderable {
         }
     }
 
+    change(start_point, end_point) {
+        // line segment from p to q
+        this.p = start_point;   // type vec2
+        this.q = end_point;     // type vec2
+
+        // parametric equation of line:
+        // l(t) = p + tv, v = q - p
+        this.v = vec2.subtract(vec2.create(), this.q, this.p);
+
+        // implicit equation ax + by + c = 0,
+        // normal an = [a1, a2],
+        // a = a1, b = a2, c = -a1p1 - a2p2
+        // v = q - p = [v1, v2] => a = [-v2, v1]
+        this.an = vec2.fromValues(-this.v[1], this.v[0]);
+        this.n = vec2.normalize(vec2.create(), this.an); // unit normal
+
+        // implicit koeficients
+        this.a = this.an[0];
+        this.b = this.an[1];
+        this.c = -this.an[0] * this.p[0] - this.an[1] * this.p[1];
+
+        // implicit koeficients in point normal form
+        this.length_of_a = vec2.length(this.an);
+        this.anf = this.a / this.length_of_a;
+        this.bnf = this.b / this.length_of_a;
+        this.cnf = this.c / this.length_of_a;
+
+        // this.update_buffer();
+    }
+
+    update_buffer() {
+        let points = new Float32Array([
+            this.p[0],this.p[1],0.0,
+            this.q[0],this.q[1],0.0
+        ]);
+
+        // this.vertex_buffer_id = this.engine.vbos_library.get_vbo_id('VBO_POSITION');
+        this.engine.vbos_library.load_data_in_vbo_at_offset('VBO_POSITION', points, this.offset);
+
+        if(this.show_normal) {
+            let normal_points = new Float32Array([
+                this.q[0],this.q[1],0.0,
+                this.q[0] + this.n[0],this.q[1] + this.n[1],0.0
+            ]);
+            this.engine.vbos_library.load_data_in_vbo_at_offset('VBO_POSITION', normal_points, this.offset);
+        }
+    }
+
+    insert_in_buffer() {
+        let points = new Float32Array([
+            this.p[0],this.p[1],0.0,
+            this.q[0],this.q[1],0.0
+        ]);
+
+        this.vertex_buffer_id = this.engine.vbos_library.get_vbo_id('VBO_POSITION');
+        this.offset = this.engine.vbos_library.load_data_in_vbo('VBO_POSITION', points);
+
+        if(this.show_normal) {
+            let normal_points = new Float32Array([
+                this.q[0],this.q[1],0.0,
+                this.q[0] + this.n[0],this.q[1] + this.n[1],0.0
+            ]);
+            this.engine.vbos_library.load_data_in_vbo('VBO_POSITION', normal_points);
+        }
+    }
+
+
     draw(gl) {
         let pvmMatrix = this.engine.camera.getPVMatrix();
 
