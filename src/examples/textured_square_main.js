@@ -2,8 +2,8 @@
 
 import MnEngine from './engine/engine';
 import Camera from './engine/camera/orthographic';
-import TexturedSquare from './textured_square_renderable';
-import Grid from './grid_renderable';
+import TexturedSquare from './model/textured_square';
+import Grid from './model/grid';
 
 export function main() {
     let engine = new MnEngine();
@@ -19,8 +19,8 @@ export function main() {
     let square = new TexturedSquare(engine, 0.0, 0.0, 8.0, 8.0, 'images/bubble-guppies.png');
     square.setGrid(grid);
 
-    engine.add_renderable(grid);
-    engine.add_renderable(square);
+    engine.scene.add_renderable(grid);
+    engine.scene.add_renderable(square);
 
     engine.load_resources_and_start();
 }

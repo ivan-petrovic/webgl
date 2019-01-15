@@ -2,7 +2,7 @@
 
 import MnEngine from './engine/engine';
 import Camera from './engine/camera/orthographic';
-import SpiralsWithLinesScene from './example_scenes/spiral_with_lines_scene';
+import SpiralsWithLinesScene from './examples/spiral_with_lines_scene';
 
 export function main() {
     let engine = new MnEngine();

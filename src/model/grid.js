@@ -1,6 +1,6 @@
 "use strict";
 
-import Renderable from './engine/renderable';
+import Renderable from '../engine/renderable';
 
 export default class Grid extends Renderable {
     constructor(engine, originX, originY, width, height, nColumns, nRows) {

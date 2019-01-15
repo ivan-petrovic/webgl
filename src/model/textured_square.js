@@ -1,6 +1,6 @@
 "use strict";
 
-import Renderable from './engine/renderable';
+import Renderable from '../engine/renderable';
 
 export default class TexturedSquare extends Renderable {
     constructor(engine, centerX, centerY, width, height, textureName) {

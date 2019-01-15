@@ -1,6 +1,6 @@
 "use strict";
 
-import Renderable from './engine/renderable';
+import Renderable from '../engine/renderable';
 
 export default class LightSaber extends Renderable {
     constructor(engine, p1x, p1y, p2x, p2y) {
