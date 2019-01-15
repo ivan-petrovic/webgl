@@ -1,6 +1,6 @@
 "use strict";
 
-import Renderable from './engine/renderable';
+import Renderable from '../engine/renderable';
 
 export default class Mandelbrot extends Renderable {
     constructor(engine) {

@@ -13,7 +13,6 @@ export function main() {
         [0, 0, 640, 480]                 // viewportArray
     );
     engine.camera = camera;
-    // engine.animation_loop = false;
 
     engine.scene = new SpiralsWithLinesScene(engine);
 

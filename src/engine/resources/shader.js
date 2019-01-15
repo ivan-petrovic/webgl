@@ -29,7 +29,12 @@ export default class {
     }
 
     _get_locations(shader_source, gl) {
-        let lines = shader_source.split("\n");
+        let lines = shader_source.split(/\r?\n/);   // Windows and Linux
+        // let lines = shader_source.split("\n");   // only Linux
+
+        // var os = require("os");
+        // var text = "...."; //Big text with many line breaks
+        // text.split(os.EOL); //Will return an array of lines on every OS node works on
 
         lines.forEach(line => {
             let tokens = line.split(" ");

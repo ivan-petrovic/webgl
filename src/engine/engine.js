@@ -6,7 +6,7 @@ import TextFileLoader from './resources/text_file_loader';
 import ShaderLibrary from './resources/shader_library';
 import VBOLibrary from './resources/vbo_library';
 import Input from './input';
-import DefaultScene from './scene';
+import DefaultScene from './default_scene';
 
 export default class {
     constructor() {
