@@ -2,7 +2,7 @@
 
 import MnEngine from './engine/engine';
 import Camera from './engine/camera/orthographic';
-import SpiralsWithLinesScene from './example_scenes/spiral_with_lines_scene';
+import LineIntersections from './example_scenes/line_intersections';
 
 export function main() {
     let engine = new MnEngine();
@@ -14,7 +14,7 @@ export function main() {
     );
     engine.camera = camera;
 
-    engine.scene = new SpiralsWithLinesScene(engine);
+    engine.scene = new LineIntersections(engine);
 
     engine.load_resources_and_start();
 }

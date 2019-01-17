@@ -73,6 +73,14 @@ export default class {
         this._element_scrollTop = 0;
         this._offsetLeft = 0;
         this._offsetTop = 0;
+        this.canvas_width = this.canvasElement.width;
+        this.canvas_half_width = this.canvasElement.width / 2;
+        this.canvas_height = this.canvasElement.height;
+        this.canvas_half_height = this.canvasElement.height / 2;
+        // console.log("this.canvas_width: " + this.canvas_width);
+        // console.log("this.canvas_half_width: " + this.canvas_half_width);
+        // console.log("this.canvas_height: " + this.canvas_height);
+        // console.log("this.canvas_half_height: " + this.canvas_half_height);
     }
 
     initialize() {
@@ -143,6 +151,16 @@ export default class {
     getMouse() { return this.mouse; }
     getMousePosX() { return this.mouse.x; }
     getMousePosY() { return this.mouse.y; }
+    get_pos(width, height) {
+        // let pos = vec2.create();
+        // let coord_system = vec2.fromValues(width, height);
+        // let coords_in_canvas = vec2.fromValues(this.mouse.x, this.mouse.y);
+        let x = (this.mouse.x - this.canvas_half_width) / this.canvas_half_width;
+        let y = (this.mouse.y - this.canvas_half_height) / this.canvas_half_height;
+        // console.log("x * 40 " + x * 40);
+        // console.log("y * 30 " + y * 30);
+        return vec2.fromValues(x * width, y * height);
+    }
 
     // Event handler functions
     _onKeyDown(event) {
@@ -178,6 +196,6 @@ export default class {
         y -= this._offsetTop;
 
         this.mouse.x = x;
-        this.mouse.y = this.canvasElement.height - y - 1;
+        this.mouse.y = this.canvas_height - y - 1;
     }
 }
