@@ -31,6 +31,10 @@ export default class extends IScene {
         this.line_set.push(line2);
         this.line_set.push(line3);
 
+        this.reflected_line = new Line(engine, vec2.fromValues(1.0, 1.0), vec2.fromValues(2.0,2.0));
+        this.reflected_line.show_normal = false;
+        this.intersection = false;
+
         // this.line1 = new Line(engine, vec2.fromValues(15.0, 0.0), vec2.fromValues(0.0,-15.0));
         // this.line2 = new Line(engine, vec2.fromValues(25.0, 0.0), vec2.fromValues(0.0,-25.0));
         // this.line3 = new Line(engine, vec2.fromValues(15.0, 5.0), vec2.fromValues(-15.0,5.0));
@@ -38,6 +42,7 @@ export default class extends IScene {
 
     load_resources() {
         this.line.load_resources();
+        this.reflected_line.load_resources();
         for(let i = 0; i < this.line_set.length; i += 1) {
             this.line_set[i].load_resources();
         }
@@ -46,6 +51,7 @@ export default class extends IScene {
 
     initialize() {
         this.line.initialize();
+        this.reflected_line.initialize();
 
         for(let i = 0; i < this.line_set.length; i += 1) {
             this.line_set[i].initialize();
@@ -100,23 +106,47 @@ export default class extends IScene {
     }
 
     check_intersection() {
-        let r = this.line.intersection(this.line_set[0]);
-    
-        let v1 = vec2.subtract(vec2.create(), r, this.line.p);
-        let v2 = vec2.subtract(vec2.create(), r, this.line.q);
-        let n = this.line_set[0].n;
-        let v3 = reflect(v1, n);
-        vec2.normalize(v3, v3);
-        vec2.scale(v3, v3, vec2.length(v2));
-    
-        let new_line = new Line(this.engine, r, vec2.add(vec2.create(), r, v3));
-        new_line.show_normal = false;
-        new_line.initialize();
-        this.line_set.push(new_line);
+        let r;
+        let r1;
+        let chosen_line = null;
+        let chosen_point = null;
+        let min_distance = 1000000.0;
+        this.intersection = false;
+        
+        for(let i = 0; i < this.line_set.length; i += 1) {
+            let curr_line = this.line_set[i];
 
-        // this.line.change(this.line.p, input.get_pos(40, 30));
-        // this.line.update_buffer();
+            r = this.line.intersection(curr_line);
+            r1 = curr_line.intersection(this.line);
     
+            if(r === false || r1 === false) {
+                continue;
+            }
+
+            this.intersection = true;
+            let distance = vec2.distance(r, this.line.p);
+            if(distance < min_distance) {
+                chosen_line = curr_line;
+                chosen_point = r;
+                min_distance = distance;
+            }
+        }
+
+        if(this.intersection) {
+            let v1 = vec2.subtract(vec2.create(), chosen_point, this.line.p);
+            let v2 = vec2.subtract(vec2.create(), chosen_point, this.line.q);
+            let n = chosen_line.n;
+            let v3 = reflect(v1, n);
+            vec2.normalize(v3, v3);
+            vec2.scale(v3, v3, vec2.length(v2));
+        
+            this.reflected_line.change(chosen_point, vec2.add(vec2.create(), chosen_point, v3));
+            this.reflected_line.update_buffer();
+    
+            this.line.change(this.line.p, chosen_point);
+            this.line.update_buffer();
+        }
+
     }
 
     draw(gl) {
@@ -126,6 +156,10 @@ export default class extends IScene {
         }
 
         this.line.draw(gl);
+
+        if(this.intersection) {
+            this.reflected_line.draw(gl);
+        }
         // this.line1.draw(gl);
         // this.line2.draw(gl);
         // this.line3.draw(gl);

@@ -70,9 +70,10 @@ export default class Line extends Renderable {
     intersection(l) {
         // check if denominator is zero
         let t = (-l.c - l.a * this.p[0] - l.b * this.p[1]) / (l.a * this.v[0] + l.b * this.v[1]);
-        console.log(t);
+        // console.log(t);
         let ret = vec2.scaleAndAdd(vec2.create(), this.p, this.v, t)
-        console.log("intersection: " + vec2.str(ret));
+        // console.log("intersection: " + vec2.str(ret));
+        if(t < 0.0 || t > 1.0) return false;
         return ret;
     }
 
