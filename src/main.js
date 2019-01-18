@@ -2,7 +2,8 @@
 
 import MnEngine from './engine/engine';
 import Camera from './engine/camera/orthographic';
-import LineIntersections from './example_scenes/line_intersections';
+// import LineIntersections from './example_scenes/line_intersections';
+import PointBounce from './example_scenes/point_bounce';
 
 export function main() {
     let engine = new MnEngine();
@@ -14,7 +15,8 @@ export function main() {
     );
     engine.camera = camera;
 
-    engine.scene = new LineIntersections(engine);
+    // engine.scene = new LineIntersections(engine);
+    engine.scene = new PointBounce(engine);
 
     engine.load_resources_and_start();
 }

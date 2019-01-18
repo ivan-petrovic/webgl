@@ -1,8 +1,9 @@
 "use strict";
 
-import Line from '../model/line';
-import reflect from '../engine/utils/reflection';
 import IScene from '../engine/scene';
+import reflect from '../engine/utils/reflection';
+import Line from '../model/line';
+import ColoredSquare from '../model/colored_square';
 
 export default class extends IScene {
 
@@ -10,24 +11,41 @@ export default class extends IScene {
         super();
         this.engine = engine;
 
-        // player line
+        // player ball
+        this.ball = new ColoredSquare(engine, [-30.0, -10.0], 0.5, 0.5);
+        this.ball.color = [0.0, 0.0, 1.0, 1.0]; // blue
+        this.velocity = vec2.fromValues(0.5, 0.0);
+        this.speed = 0.5;
         this.line = new Line(engine, vec2.fromValues(-35.0, 0.0), vec2.fromValues(35.0,-25.0));
-        this.line.show_normal = false;
-        this.line.color = [0.0, 0.0, 1.0, 1.0];
-
-        // some static lines in scene
-        let line1 = new Line(engine, vec2.fromValues(15.0, 0.0), vec2.fromValues(0.0,-15.0));
-        let line2 = new Line(engine, vec2.fromValues(25.0, 0.0), vec2.fromValues(0.0,-25.0));
-        let line3 = new Line(engine, vec2.fromValues(15.0, 5.0), vec2.fromValues(-15.0,5.0));
-
-        line1.show_normal = false;
-        line2.show_normal = false;
-        line3.show_normal = false;
 
         this.line_set = [];
+
+        // some static lines in scene
+        let line0 = new Line(this.engine, vec2.fromValues(-35.0,-25.0), vec2.fromValues(35.0,-25.0));
+        let line1 = new Line(this.engine, vec2.fromValues(35.0,-25.0), vec2.fromValues(35.0,25.0));
+        let line2 = new Line(this.engine, vec2.fromValues(35.0,25.0), vec2.fromValues(-35.0,25.0));
+        let line3 = new Line(this.engine, vec2.fromValues(-35.0,25.0), vec2.fromValues(-35.0,-25.0));
+
+        line0.show_normal = false; 
+        line1.show_normal = false; 
+        line2.show_normal = false; 
+        line3.show_normal = false; 
+            
+        this.line_set.push(line0);
         this.line_set.push(line1);
         this.line_set.push(line2);
         this.line_set.push(line3);
+
+        for(let i = 0; i < 5; i += 1) {
+            let x1 = Math.floor(Math.random() * 80) - 40;
+            let y1 = Math.floor(Math.random() * 60) - 30;
+            let x2 = Math.floor(Math.random() * 80) - 40;
+            let y2 = Math.floor(Math.random() * 60) - 30;
+
+            let line = new Line(engine, vec2.fromValues(x1, y1), vec2.fromValues(x2, y2));
+            line.show_normal = false;
+            this.line_set.push(line);
+        }
 
         this.intersection = false;
 
@@ -37,7 +55,7 @@ export default class extends IScene {
     }
 
     load_resources() {
-        this.line.load_resources();
+        this.ball.load_resources();
 
         for(let i = 0; i < this.line_set.length; i += 1) {
             this.line_set[i].load_resources();
@@ -45,7 +63,7 @@ export default class extends IScene {
     }
 
     initialize() {
-        this.line.initialize();
+        this.ball.initialize();
 
         for(let i = 0; i < this.line_set.length; i += 1) {
             this.line_set[i].initialize();
@@ -53,9 +71,11 @@ export default class extends IScene {
     }
 
     update(input) {
-        // 40 and 30 are half width and height of scene, for now hardcoded
-        this.line.change(this.line.p, input.get_pos(40, 30));
-        this.line.update_buffer();
+        let curr_position = vec2.fromValues(this.ball.position[0], this.ball.position[1]);
+        let new_position = vec2.create();
+        vec2.add(new_position, curr_position, this.velocity);
+
+        this.line.change(curr_position, new_position);
 
         this.last_checked_line = null;
         this.valid_cnt = 0;
@@ -64,6 +84,17 @@ export default class extends IScene {
         let reflected_segment = this.check_intersection(this.line);
         while(reflected_segment !== null) {
             reflected_segment = this.check_intersection(reflected_segment);
+        }
+
+        if(this.intersection) {
+            this.ball.position[0] = this.reflected_lines_set[this.valid_cnt - 1].q[0];
+            this.ball.position[1] = this.reflected_lines_set[this.valid_cnt - 1].q[1];
+
+            vec2.normalize(this.velocity, this.reflected_lines_set[this.valid_cnt - 1].v);
+            vec2.scale(this.velocity, this.velocity, this.speed);
+        } else {
+            this.ball.position[0] = new_position[0];
+            this.ball.position[1] = new_position[1];
         }
     }
 
@@ -141,18 +172,7 @@ export default class extends IScene {
         for(let i = 0; i < this.line_set.length; i += 1) {
             this.line_set[i].draw(gl);
         }
-
-        if(this.intersection) {
-            for(let i = 0; i < this.valid_cnt; i += 1) {
-                this.reflected_lines_set[i].draw(gl);
-            }
-        } else {
-            this.line.draw(gl);
-        }
+        
+        this.ball.draw(gl);
     }
-
-    // before_draw(gl) {
-    //     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    //     gl.clear(gl.COLOR_BUFFER_BIT);
-    // }
 }
