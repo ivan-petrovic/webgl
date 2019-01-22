@@ -14,7 +14,7 @@ export default class extends IScene {
         // player ball
         this.ball = new ColoredSquare(engine, [-30.0, -10.0], 0.5, 0.5);
         this.ball.color = [0.0, 0.0, 1.0, 1.0]; // blue
-        this.velocity = vec2.fromValues(0.5, 0.0);
+        this.velocity = vec2.fromValues(1.0, 0.0);
         this.speed = 0.5;
         this.line = new Line(engine, vec2.fromValues(-35.0, 0.0), vec2.fromValues(35.0,-25.0));
 
@@ -36,16 +36,25 @@ export default class extends IScene {
         this.line_set.push(line2);
         this.line_set.push(line3);
 
-        for(let i = 0; i < 5; i += 1) {
+        for(let i = 0; i < 15; i += 1) {
             let x1 = Math.floor(Math.random() * 80) - 40;
+            if(x1 < -35) x1 = -35;
+            if(x1 > 35) x1 = 35;
             let y1 = Math.floor(Math.random() * 60) - 30;
-            let x2 = Math.floor(Math.random() * 80) - 40;
-            let y2 = Math.floor(Math.random() * 60) - 30;
+            if(y1 < -25) y1 = -25;
+            if(y1 > 25) y1 = 25;
 
-            let line = new Line(engine, vec2.fromValues(x1, y1), vec2.fromValues(x2, y2));
+            let scale = Math.floor(Math.random() * 10) + 5;
+            let begin = vec2.fromValues(x1, y1);
+            let disp = vec2.random(vec2.create(), scale);
+            
+            let line = new Line(engine, begin, vec2.add(vec2.create(), begin, disp));
             line.show_normal = false;
             this.line_set.push(line);
         }
+        let line4 = new Line(engine, vec2.fromValues(15.0, 0.0), vec2.fromValues(0.0,-15.0));
+        line4.show_normal = false; 
+        this.line_set.push(line4);
 
         this.intersection = false;
 
@@ -71,31 +80,91 @@ export default class extends IScene {
     }
 
     update(input) {
-        let curr_position = vec2.fromValues(this.ball.position[0], this.ball.position[1]);
-        let new_position = vec2.create();
-        vec2.add(new_position, curr_position, this.velocity);
+        // if (input.isKeyClicked(input.Keys.Right)) {
+            let curr_position = vec2.fromValues(this.ball.position[0], this.ball.position[1]);
+            let new_position = vec2.create();
+            vec2.scaleAndAdd(new_position, curr_position, this.velocity, 2);
 
-        this.line.change(curr_position, new_position);
+            this.line.change(curr_position, new_position);
 
-        this.last_checked_line = null;
-        this.valid_cnt = 0;
-        this.intersection = false;
-        
-        let reflected_segment = this.check_intersection(this.line);
-        while(reflected_segment !== null) {
-            reflected_segment = this.check_intersection(reflected_segment);
-        }
+            this.last_checked_line = null;
+            this.valid_cnt = 0;
+            this.intersection = false;
+            
+            let reflected_segment = this.check_intersection(this.line);
+            while(reflected_segment !== null) {
+                reflected_segment = this.check_intersection(reflected_segment);
+            }
 
-        if(this.intersection) {
-            this.ball.position[0] = this.reflected_lines_set[this.valid_cnt - 1].q[0];
-            this.ball.position[1] = this.reflected_lines_set[this.valid_cnt - 1].q[1];
+            // console.log("curr pos: " + vec2.str(this.ball.position));
+            // console.log("new pos: " + vec2.str(new_position));
 
-            vec2.normalize(this.velocity, this.reflected_lines_set[this.valid_cnt - 1].v);
-            vec2.scale(this.velocity, this.velocity, this.speed);
-        } else {
-            this.ball.position[0] = new_position[0];
-            this.ball.position[1] = new_position[1];
-        }
+            if(this.intersection) {
+                let should_travel = this.speed;
+                let epsilon = 0.99 * this.speed;
+
+                for(let i = 0; i < this.reflected_lines_set.length; i += 1) {
+                    let x = this.reflected_lines_set[i];
+                    let l = vec2.distance(x.q, x.p);
+                    // console.log("x[" + i + "]:");
+                    // console.log(x);
+
+                    if(Math.abs(l - should_travel) < epsilon) {
+                        // console.log("close: " + (l - should_travel));
+
+                        vec2.normalize(this.velocity, this.reflected_lines_set[i+1].v);
+                        let np = vec2.scaleAndAdd(vec2.create(), x.q, this.velocity, epsilon);
+
+                        this.ball.position[0] = np[0];
+                        this.ball.position[1] = np[1];
+
+                        break;
+                    } else if(l < should_travel) {
+                        should_travel -= l;
+                        // console.log("l < st");
+                        // console.log("should_travel: " + should_travel);
+                        // console.log("this.speed: " + this.speed);
+                        // console.log("l: " + l);
+                    } else {
+                        vec2.normalize(this.velocity, x.v);
+                        let np = vec2.scaleAndAdd(vec2.create(), x.p, this.velocity, should_travel);
+                        // console.log("l >= st");
+                        // console.log("should_travel: " + should_travel);
+                        // console.log("this.speed: " + this.speed);
+
+                        // console.log("new pos: " + vec2.str(np));
+                        // console.log("this.velocity: " + vec2.str(this.velocity));
+                        // console.log("x.v: " + vec2.str(x.v));
+
+                        this.ball.position[0] = np[0];
+                        this.ball.position[1] = np[1];
+
+                        break;
+                    }
+                }
+
+                // this.ball.position[0] = this.reflected_lines_set[this.valid_cnt - 1].q[0];
+                // this.ball.position[1] = this.reflected_lines_set[this.valid_cnt - 1].q[1];
+
+                // vec2.normalize(this.velocity, this.reflected_lines_set[this.valid_cnt - 1].v);
+                // vec2.scale(this.velocity, this.velocity, this.speed);
+                // console.log("this.valid_cnt: " + this.valid_cnt);
+                // console.log("reflected p: " + vec2.str(this.reflected_lines_set[this.valid_cnt - 1].p));
+                // console.log("reflected q: " + vec2.str(this.reflected_lines_set[this.valid_cnt - 1].q));
+                // console.log("reflected v: " + vec2.str(this.reflected_lines_set[this.valid_cnt - 1].v));
+                // console.log("intersection");
+            } else {
+                let np = vec2.scaleAndAdd(vec2.create(), curr_position, this.velocity, this.speed);
+                // console.log("new pos: " + vec2.str(np));
+                this.ball.position[0] = np[0];
+                this.ball.position[1] = np[1];
+
+                // this.ball.position[0] = new_position[0];
+                // this.ball.position[1] = new_position[1];
+                // console.log("no intersection");
+            }
+            // console.log(vec2.str(this.velocity));
+        // }
     }
 
     check_intersection(line) {
