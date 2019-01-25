@@ -56,7 +56,7 @@ export default class TexturedSquare extends Renderable {
 
     load_resources() {
         super.load_resources();
-        this.engine.texture_file_loader.loadTexture(this.textureName);        
+        this.engine.texture_file_loader.loadTexture(this.textureName);
     }
 
     initialize() {

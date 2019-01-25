@@ -3,7 +3,8 @@
 import MnEngine from './engine/engine';
 import Camera from './engine/camera/orthographic';
 // import LineIntersections from './example_scenes/line_intersections';
-import PointBounce from './example_scenes/point_bounce';
+// import PointBounce from './example_scenes/point_bounce';
+import SymetricDrawing from './example_scenes/symetric_drawing';
 
 export function main() {
     let engine = new MnEngine();
@@ -16,7 +17,8 @@ export function main() {
     engine.camera = camera;
 
     // engine.scene = new LineIntersections(engine);
-    engine.scene = new PointBounce(engine);
+    // engine.scene = new PointBounce(engine);
+    engine.scene = new SymetricDrawing(engine);
 
     engine.load_resources_and_start();
 }

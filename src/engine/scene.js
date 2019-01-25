@@ -13,4 +13,6 @@ export default class {
     draw(gl) {}
 
     before_draw(gl) {}
+
+    clear(gl) {}
 }

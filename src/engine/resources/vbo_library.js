@@ -116,6 +116,14 @@ export default class {
         buffer.load_data_at_offset(data, offset, this.gl);
     }
 
+    reset_offset(vbo_name, offset) {
+        if (vbo_name in this.vbos_map) {
+            this.vbos_map[vbo_name].current_position = offset;
+        } else {
+            console.log("VBO with name " + vbo_name + " does not exists.");
+        }
+    }
+
     initialize() {
         let verticesOfSquare = [
             1.0, 1.0, 0.0,
