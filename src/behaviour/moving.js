@@ -45,6 +45,7 @@ export default class  {
 
         if(this.moving_right) {
             this.object.center_x += this.speed;
+            this.object.position[0] += this.speed;
             // if(this.centerX > this.goalPosition[0]) {
             //     this.centerX = this.goalPosition[0];
                 this.moving_right = false;
@@ -53,6 +54,7 @@ export default class  {
 
         if(this.moving_left) {
             this.object.center_x -= this.speed;
+            this.object.position[0] -= this.speed;
             // if(this.centerX < this.goalPosition[0]) {
             //     this.centerX = this.goalPosition[0];
                 this.moving_left = false;
@@ -61,6 +63,7 @@ export default class  {
 
         if(this.moving_up) {
             this.object.center_y += this.speed;
+            this.object.position[1] += this.speed;
             // if(this.centerY > this.goalPosition[1]) {
             //     this.centerY = this.goalPosition[1];
                 this.moving_up = false;
@@ -69,6 +72,7 @@ export default class  {
 
         if(this.moving_down) {
             this.object.center_y -= this.speed;
+            this.object.position[1] -= this.speed;
             // if(this.centerY < this.goalPosition[1]) {
             //     this.centerY = this.goalPosition[1];
                 this.moving_down = false;

@@ -137,5 +137,16 @@ export default class {
 
         let size_in_bytes = 20580;
         this.create_vbo('VBO_POSITION', size_in_bytes, this.gl.ARRAY_BUFFER);
+
+        let initTexCoord = [
+            1.0, 1.0,
+            0.0, 1.0,
+            1.0, 0.0,
+            0.0, 0.0
+        ];
+        let texCoordBuffer = new Buffer(new Float32Array(initTexCoord), this.gl.ARRAY_BUFFER);
+        texCoordBuffer.usage = this.gl.DYNAMIC_DRAW;
+        texCoordBuffer.initialize(this.gl);
+        this.vbos_map['SPRITE_TEXTURE_COORDS'] = texCoordBuffer;
     }
 }

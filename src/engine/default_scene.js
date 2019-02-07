@@ -1,7 +1,6 @@
 "use strict";
 
 import IScene from './scene';
-import { CANCELLED } from 'dns';
 
 export default class DefaultScene extends IScene {
     constructor() {
@@ -49,10 +48,15 @@ export default class DefaultScene extends IScene {
         // gl.blendFunc(gl.SRC_COLOR, gl.ONE)
         // gl.enable(gl.BLEND);
         // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // for transparent texture
-        console.log("default scene before draw");
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        // gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clearColor(1.0, 0.7, 0.7, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         gl.enable(gl.DEPTH_TEST);
+    }
+
+    clear(gl) {
+        gl.clearColor(1.0, 0.7, 0.7, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 }

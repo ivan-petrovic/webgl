@@ -11,7 +11,8 @@ import DefaultScene from './default_scene';
 export default class {
     constructor() {
         this.canvas = document.getElementById('glscreen');
-        this.gl     = this.canvas.getContext('webgl', {alpha: false, preserveDrawingBuffer: true}) || this.canvas.getContext('experimental-webgl', {alpha: false});
+        this.gl     = this.canvas.getContext('webgl', {alpha: false}) || this.canvas.getContext('experimental-webgl', {alpha: false});
+        // this.gl     = this.canvas.getContext('webgl', {alpha: false, preserveDrawingBuffer: true}) || this.canvas.getContext('experimental-webgl', {alpha: false});
         this.width  = this.gl.drawingBufferWidth;
         this.height = this.gl.drawingBufferHeight;
 
